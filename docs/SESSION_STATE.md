@@ -19,6 +19,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - recovery policy hardening: `x/group` policy existence checks + network-aware timelock minimums
   - recovery execute authorization tightened (policy/authority only)
   - immutable issuer + anti-bait-switch rule (cannot enable seizure after minting starts)
+  - token admin renounce flow (mint disable lock) with policy guardrails
   - accrual and claim ledger
   - reward pool funding tx (`fund-reward-pool`) for claim liquidity operations
   - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker

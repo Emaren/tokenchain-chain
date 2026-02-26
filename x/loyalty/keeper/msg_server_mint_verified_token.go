@@ -45,6 +45,9 @@ func (k msgServer) MintVerifiedToken(ctx context.Context, msg *types.MsgMintVeri
 	if msg.Creator != token.Creator && !isAuthority {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only token owner or authority can mint")
 	}
+	if token.AdminRenounced {
+		return nil, errorsmod.Wrap(types.ErrAdminRenounced, "token admin has been renounced; minting is disabled")
+	}
 
 	if token.MintedSupply > token.MaxSupply-msg.Amount {
 		return nil, errorsmod.Wrap(types.ErrCapExceeded, "mint amount exceeds configured cap")
@@ -64,7 +67,7 @@ func (k msgServer) MintVerifiedToken(ctx context.Context, msg *types.MsgMintVeri
 	}
 
 	return &types.MsgMintVerifiedTokenResponse{
-		Denom:       token.Denom,
+		Denom:        token.Denom,
 		MintedSupply: token.MintedSupply,
 	}, nil
 }

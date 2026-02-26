@@ -33,6 +33,9 @@ service Msg {
   // UpdateVerifiedtoken defines the UpdateVerifiedtoken RPC.
   rpc UpdateVerifiedtoken(MsgUpdateVerifiedtoken) returns (MsgUpdateVerifiedtokenResponse);
 
+  // RenounceTokenAdmin defines the RenounceTokenAdmin RPC.
+  rpc RenounceTokenAdmin(MsgRenounceTokenAdmin) returns (MsgRenounceTokenAdminResponse);
+
   // DeleteVerifiedtoken defines the DeleteVerifiedtoken RPC.
   rpc DeleteVerifiedtoken(MsgDeleteVerifiedtoken) returns (MsgDeleteVerifiedtokenResponse);
 
@@ -163,6 +166,19 @@ message MsgUpdateVerifiedtoken {
 
 // MsgUpdateVerifiedtokenResponse defines the MsgUpdateVerifiedtokenResponse message.
 message MsgUpdateVerifiedtokenResponse {}
+
+// MsgRenounceTokenAdmin defines the MsgRenounceTokenAdmin message.
+message MsgRenounceTokenAdmin {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+}
+
+// MsgRenounceTokenAdminResponse defines the MsgRenounceTokenAdminResponse message.
+message MsgRenounceTokenAdminResponse {
+  string denom = 1;
+  bool admin_renounced = 2;
+}
 
 // MsgDeleteVerifiedtoken defines the MsgDeleteVerifiedtoken message.
 message MsgDeleteVerifiedtoken {

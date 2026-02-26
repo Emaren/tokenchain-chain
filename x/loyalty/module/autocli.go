@@ -130,6 +130,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "issuer"}, {ProtoField: "name"}, {ProtoField: "symbol"}, {ProtoField: "description"}, {ProtoField: "website"}, {ProtoField: "max_supply"}, {ProtoField: "minted_supply"}, {ProtoField: "verified"}, {ProtoField: "seizure_opt_in"}, {ProtoField: "recovery_group_policy"}, {ProtoField: "recovery_timelock_hours"}},
 				},
 				{
+					RpcMethod:      "RenounceTokenAdmin",
+					Use:            "renounce-token-admin [denom]",
+					Short:          "Renounce verified token admin powers (locks minting)",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
+				},
+				{
 					RpcMethod:      "DeleteVerifiedtoken",
 					Use:            "delete-verifiedtoken [denom]",
 					Short:          "Delete verifiedtoken",

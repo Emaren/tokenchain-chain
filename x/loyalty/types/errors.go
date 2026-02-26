@@ -23,4 +23,6 @@ var (
 	ErrRecoveryTooEarly     = errors.Register(ModuleName, 1112, "recovery operation timelock not elapsed")
 	ErrRecoveryBadRequest   = errors.Register(ModuleName, 1113, "invalid recovery operation request")
 	ErrRewardPoolInsufficient = errors.Register(ModuleName, 1114, "reward pool balance is insufficient for claim")
+	ErrAdminRenounced       = errors.Register(ModuleName, 1115, "token admin has been renounced")
+	ErrAdminRenouncePolicy  = errors.Register(ModuleName, 1116, "token admin renounce is not allowed with recovery-enabled policy")
 )

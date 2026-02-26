@@ -27,6 +27,7 @@ This repository now includes a working chain baseline with:
   - timelock minimum is enforced per network (`testnet_timelock_hours` vs `mainnet_timelock_hours`)
   - issuer is immutable after token creation
   - seizure/recovery cannot be enabled after minting has begun
+  - optional token admin renounce (`renounce-token-admin`) permanently disables minting for that token
 - on-chain recovery operation queue with timelock execution:
   - `queue-recovery-transfer`
   - `execute-recovery-transfer` (policy/authority gated)

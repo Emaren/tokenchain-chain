@@ -18,4 +18,5 @@ message Verifiedtoken {
   string recovery_group_policy = 11;
   uint64 recovery_timelock_hours = 12;
   string creator = 13;
+  bool admin_renounced = 14;
 }

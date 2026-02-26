@@ -47,6 +47,9 @@
     - mainnet => `mainnet_timelock_hours`
   - `execute-recovery-transfer` (policy/authority only, after timelock)
   - `cancel-recovery-transfer` (policy/authority only)
+- Optional trust lock:
+  - `renounce-token-admin [denom]` permanently disables future minting for that token
+  - renounce is blocked while seizure/recovery policy is enabled
 - Hard cap enforcement in mint path (`mint-verified-token`)
 - Reward accrual ledger and claim path:
   - authority can record accruals

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"tokenchain/x/loyalty/types"
 
@@ -76,6 +77,7 @@ func (k msgServer) CreateVerifiedtoken(ctx context.Context, msg *types.MsgCreate
 		SeizureOptIn:          msg.SeizureOptIn,
 		RecoveryGroupPolicy:   recoveryPolicy,
 		RecoveryTimelockHours: recoveryTimelock,
+		AdminRenounced:        false,
 	}
 
 	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {
@@ -130,6 +132,14 @@ func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdate
 	if !val.SeizureOptIn && msg.SeizureOptIn && val.MintedSupply > 0 {
 		return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "cannot enable seizure/recovery after token minting has started")
 	}
+	if val.AdminRenounced {
+		if msg.MaxSupply != val.MaxSupply ||
+			msg.SeizureOptIn != val.SeizureOptIn ||
+			strings.TrimSpace(msg.RecoveryGroupPolicy) != val.RecoveryGroupPolicy ||
+			msg.RecoveryTimelockHours != val.RecoveryTimelockHours {
+			return nil, errorsmod.Wrap(types.ErrAdminRenounced, "admin-renounced token cannot change cap or recovery policy settings")
+		}
+	}
 
 	// Checks if the msg creator is the same as the current owner or the authority.
 	isAuthority := k.ensureAuthority(msg.Creator) == nil
@@ -162,6 +172,7 @@ func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdate
 		SeizureOptIn:          msg.SeizureOptIn,
 		RecoveryGroupPolicy:   recoveryPolicy,
 		RecoveryTimelockHours: recoveryTimelock,
+		AdminRenounced:        val.AdminRenounced,
 	}
 
 	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {
