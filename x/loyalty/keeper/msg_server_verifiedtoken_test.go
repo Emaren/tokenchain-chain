@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
@@ -14,6 +15,44 @@ import (
 
 func factoryDenom(issuer, subdenom string) string {
 	return fmt.Sprintf("factory/%s/%s", issuer, subdenom)
+}
+
+func TestVerifiedtokenCreate_RecoveryPolicyMustExistInGroupModule(t *testing.T) {
+	f := initFixture(t)
+	srv := keeper.NewMsgServerImpl(f.keeper)
+	creator := authorityAddress(t, f)
+
+	msg := baseVerifiedToken(creator, "recovery-policy")
+	msg.SeizureOptIn = true
+	msg.RecoveryGroupPolicy = sample.AccAddress()
+	msg.RecoveryTimelockHours = 1
+
+	_, err := srv.CreateVerifiedtoken(f.ctx, msg)
+	require.ErrorIs(t, err, types.ErrRecoveryPolicy)
+
+	f.groupKeeper.addPolicy(msg.RecoveryGroupPolicy)
+	_, err = srv.CreateVerifiedtoken(f.ctx, msg)
+	require.NoError(t, err)
+}
+
+func TestVerifiedtokenCreate_MainnetUsesMainnetTimelockMinimum(t *testing.T) {
+	f := initFixture(t)
+	srv := keeper.NewMsgServerImpl(f.keeper)
+	creator := authorityAddress(t, f)
+	mainnetCtx := sdk.UnwrapSDKContext(f.ctx).WithChainID("tokenchain-1")
+
+	msg := baseVerifiedToken(creator, "mainnet-timelock")
+	msg.SeizureOptIn = true
+	msg.RecoveryGroupPolicy = sample.AccAddress()
+	msg.RecoveryTimelockHours = 1
+	f.groupKeeper.addPolicy(msg.RecoveryGroupPolicy)
+
+	_, err := srv.CreateVerifiedtoken(mainnetCtx, msg)
+	require.ErrorIs(t, err, types.ErrRecoveryPolicy)
+
+	msg.RecoveryTimelockHours = 24
+	_, err = srv.CreateVerifiedtoken(mainnetCtx, msg)
+	require.NoError(t, err)
 }
 
 func baseVerifiedToken(creator, denom string) *types.MsgCreateVerifiedtoken {

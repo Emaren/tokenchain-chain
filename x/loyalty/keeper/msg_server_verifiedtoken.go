@@ -57,16 +57,9 @@ func (k msgServer) CreateVerifiedtoken(ctx context.Context, msg *types.MsgCreate
 
 	recoveryTimelock := msg.RecoveryTimelockHours
 	recoveryPolicy := msg.RecoveryGroupPolicy
-	if !msg.SeizureOptIn {
-		recoveryTimelock = 0
-		recoveryPolicy = ""
-	} else {
-		if recoveryPolicy == "" {
-			return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "recovery group policy is required when seizure is enabled")
-		}
-		if recoveryTimelock < params.TestnetTimelockHours {
-			return nil, errorsmod.Wrapf(types.ErrRecoveryPolicy, "recovery timelock must be at least %d hours", params.TestnetTimelockHours)
-		}
+	recoveryPolicy, recoveryTimelock, err = k.validateRecoverySettings(ctx, msg.SeizureOptIn, recoveryPolicy, recoveryTimelock, params)
+	if err != nil {
+		return nil, err
 	}
 
 	var verifiedtoken = types.Verifiedtoken{
@@ -134,16 +127,9 @@ func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdate
 	}
 	recoveryTimelock := msg.RecoveryTimelockHours
 	recoveryPolicy := msg.RecoveryGroupPolicy
-	if !msg.SeizureOptIn {
-		recoveryTimelock = 0
-		recoveryPolicy = ""
-	} else {
-		if recoveryPolicy == "" {
-			return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "recovery group policy is required when seizure is enabled")
-		}
-		if recoveryTimelock < params.TestnetTimelockHours {
-			return nil, errorsmod.Wrapf(types.ErrRecoveryPolicy, "recovery timelock must be at least %d hours", params.TestnetTimelockHours)
-		}
+	recoveryPolicy, recoveryTimelock, err = k.validateRecoverySettings(ctx, msg.SeizureOptIn, recoveryPolicy, recoveryTimelock, params)
+	if err != nil {
+		return nil, err
 	}
 
 	var verifiedtoken = types.Verifiedtoken{

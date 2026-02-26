@@ -21,6 +21,9 @@ This repository now includes a working chain baseline with:
 - tokenfactory-style business denom canonicalization (`factory/{issuer}/{subdenom}`)
 - no-seizure default (`seizure_opt_in_default=false`)
 - optional recovery policy metadata (`recovery_group_policy`, timelock hours)
+- recovery policy hardening:
+  - `recovery_group_policy` must resolve to an existing `x/group` policy account
+  - timelock minimum is enforced per network (`testnet_timelock_hours` vs `mainnet_timelock_hours`)
 - on-chain recovery operation queue with timelock execution:
   - `queue-recovery-transfer`
   - `execute-recovery-transfer`

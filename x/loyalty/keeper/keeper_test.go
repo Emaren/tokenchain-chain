@@ -13,6 +13,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	grouptypes "github.com/cosmos/cosmos-sdk/x/group"
 
 	"tokenchain/x/loyalty/keeper"
 	module "tokenchain/x/loyalty/module"
@@ -24,11 +25,34 @@ type fixture struct {
 	keeper       keeper.Keeper
 	addressCodec address.Codec
 	bankKeeper   *mockBankKeeper
+	groupKeeper  *mockGroupKeeper
 }
 
 type mockBankKeeper struct {
 	accountBalances map[string]sdk.Coins
 	moduleBalances  map[string]sdk.Coins
+}
+
+type mockGroupKeeper struct {
+	policies map[string]*grouptypes.GroupPolicyInfo
+}
+
+func newMockGroupKeeper() *mockGroupKeeper {
+	return &mockGroupKeeper{
+		policies: make(map[string]*grouptypes.GroupPolicyInfo),
+	}
+}
+
+func (m *mockGroupKeeper) addPolicy(addr string) {
+	m.policies[addr] = &grouptypes.GroupPolicyInfo{Address: addr}
+}
+
+func (m *mockGroupKeeper) GroupPolicyInfo(_ context.Context, req *grouptypes.QueryGroupPolicyInfoRequest) (*grouptypes.QueryGroupPolicyInfoResponse, error) {
+	info, ok := m.policies[req.Address]
+	if !ok {
+		return nil, sdkerrors.ErrNotFound
+	}
+	return &grouptypes.QueryGroupPolicyInfoResponse{Info: info}, nil
 }
 
 func newMockBankKeeper() *mockBankKeeper {
@@ -88,6 +112,7 @@ func initFixture(t *testing.T) *fixture {
 
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
 	bankKeeper := newMockBankKeeper()
+	groupKeeper := newMockGroupKeeper()
 
 	k := keeper.NewKeeper(
 		storeService,
@@ -97,6 +122,7 @@ func initFixture(t *testing.T) *fixture {
 		bankKeeper,
 		nil,
 		nil,
+		groupKeeper,
 	)
 
 	// Initialize params
@@ -109,5 +135,6 @@ func initFixture(t *testing.T) *fixture {
 		keeper:       k,
 		addressCodec: addressCodec,
 		bankKeeper:   bankKeeper,
+		groupKeeper:  groupKeeper,
 	}
 }

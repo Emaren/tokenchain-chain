@@ -13,9 +13,10 @@ import (
 	"tokenchain/x/loyalty/types"
 )
 
-func createRecoveryEnabledToken(t *testing.T, srv types.MsgServer, ctx sdk.Context, creator string, subdenom string) string {
+func createRecoveryEnabledToken(t *testing.T, f *fixture, srv types.MsgServer, ctx sdk.Context, creator string, subdenom string) string {
 	t.Helper()
 
+	f.groupKeeper.addPolicy(creator)
 	msg := baseVerifiedToken(creator, subdenom)
 	msg.SeizureOptIn = true
 	msg.RecoveryGroupPolicy = creator
@@ -32,7 +33,7 @@ func TestQueueRecoveryTransfer(t *testing.T) {
 	creator := authorityAddress(t, f)
 	ctx := sdk.UnwrapSDKContext(f.ctx).WithBlockTime(time.Unix(1700000000, 0))
 
-	denom := createRecoveryEnabledToken(t, srv, ctx, creator, "recoverqueue")
+	denom := createRecoveryEnabledToken(t, f, srv, ctx, creator, "recoverqueue")
 	from := sample.AccAddress()
 	to := sample.AccAddress()
 
@@ -74,7 +75,7 @@ func TestExecuteRecoveryTransfer(t *testing.T) {
 	creator := authorityAddress(t, f)
 	baseCtx := sdk.UnwrapSDKContext(f.ctx).WithBlockTime(time.Unix(1700001000, 0))
 
-	denom := createRecoveryEnabledToken(t, srv, baseCtx, creator, "recoverexec")
+	denom := createRecoveryEnabledToken(t, f, srv, baseCtx, creator, "recoverexec")
 	from := sample.AccAddress()
 	to := sample.AccAddress()
 
@@ -140,7 +141,7 @@ func TestCancelRecoveryTransfer(t *testing.T) {
 	creator := authorityAddress(t, f)
 	baseCtx := sdk.UnwrapSDKContext(f.ctx).WithBlockTime(time.Unix(1700002000, 0))
 
-	denom := createRecoveryEnabledToken(t, srv, baseCtx, creator, "recovercancel")
+	denom := createRecoveryEnabledToken(t, f, srv, baseCtx, creator, "recovercancel")
 	from := sample.AccAddress()
 	to := sample.AccAddress()
 

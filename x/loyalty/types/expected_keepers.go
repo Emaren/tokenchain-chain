@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cosmossdk.io/core/address"
+	grouptypes "github.com/cosmos/cosmos-sdk/x/group"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,6 +31,11 @@ type BankKeeper interface {
 	SendCoinsFromModuleToAccount(context.Context, string, sdk.AccAddress, sdk.Coins) error
 	SendCoinsFromAccountToModule(context.Context, sdk.AccAddress, string, sdk.Coins) error
 	// Methods imported from bank should be defined here
+}
+
+// GroupKeeper defines the expected interface for the Group module.
+type GroupKeeper interface {
+	GroupPolicyInfo(context.Context, *grouptypes.QueryGroupPolicyInfoRequest) (*grouptypes.QueryGroupPolicyInfoResponse, error)
 }
 
 // ParamSubspace defines the expected Subspace interface for parameters.

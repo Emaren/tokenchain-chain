@@ -48,12 +48,20 @@ func (k msgServer) QueueRecoveryTransfer(ctx context.Context, msg *types.MsgQueu
 	if token.RecoveryGroupPolicy == "" {
 		return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "recovery_group_policy is required for recovery-enabled tokens")
 	}
+	if err := k.ensureGroupPolicyExists(ctx, token.RecoveryGroupPolicy); err != nil {
+		return nil, err
+	}
 	isAuthority := k.ensureAuthority(msg.Creator) == nil
 	if msg.Creator != token.RecoveryGroupPolicy && !isAuthority {
 		return nil, errorsmod.Wrap(types.ErrRecoveryUnauthorized, "only recovery group policy or authority can queue recovery")
 	}
-	if token.RecoveryTimelockHours == 0 {
-		return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "recovery timelock must be greater than zero")
+	params, err := k.getParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	minTimelock := minimumRecoveryTimelockHours(ctx, params)
+	if token.RecoveryTimelockHours < minTimelock {
+		return nil, errorsmod.Wrapf(types.ErrRecoveryPolicy, "recovery timelock must be at least %d hours for this network", minTimelock)
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

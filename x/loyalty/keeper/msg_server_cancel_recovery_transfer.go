@@ -44,6 +44,11 @@ func (k msgServer) CancelRecoveryTransfer(ctx context.Context, msg *types.MsgCan
 		}
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
 	}
+	if token.RecoveryGroupPolicy != "" {
+		if err := k.ensureGroupPolicyExists(ctx, token.RecoveryGroupPolicy); err != nil {
+			return nil, err
+		}
+	}
 	isAuthority := k.ensureAuthority(msg.Creator) == nil
 	if msg.Creator != token.RecoveryGroupPolicy && !isAuthority {
 		return nil, errorsmod.Wrap(types.ErrRecoveryUnauthorized, "only recovery group policy or authority can cancel recovery")

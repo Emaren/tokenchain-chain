@@ -36,8 +36,12 @@
   - tokenfactory-style denom format: `factory/{issuer}/{subdenom}`
 - No-seizure default: `seizure_opt_in_default=false`
 - Opt-in recovery execution flow:
+  - recovery policy address must exist in `x/group` (not a free-form string)
   - `queue-recovery-transfer` (policy/authority only)
   - timelock enforced on-chain
+  - timelock minimum follows network mode:
+    - testnet => `testnet_timelock_hours`
+    - mainnet => `mainnet_timelock_hours`
   - `execute-recovery-transfer` (after timelock)
   - `cancel-recovery-transfer` (policy/authority only)
 - Hard cap enforcement in mint path (`mint-verified-token`)

@@ -27,6 +27,7 @@ type Keeper struct {
 	bankKeeper           types.BankKeeper
 	authKeeper           types.AuthKeeper
 	stakingKeeper        types.StakingKeeper
+	groupKeeper          types.GroupKeeper
 	Creatorallowlist     collections.Map[string, types.Creatorallowlist]
 	Verifiedtoken        collections.Map[string, types.Verifiedtoken]
 	Rewardaccrual        collections.Map[string, types.Rewardaccrual]
@@ -43,6 +44,7 @@ func NewKeeper(
 	bankKeeper types.BankKeeper,
 	authKeeper types.AuthKeeper,
 	stakingKeeper types.StakingKeeper,
+	groupKeeper types.GroupKeeper,
 ) Keeper {
 	if _, err := addressCodec.BytesToString(authority); err != nil {
 		panic(fmt.Sprintf("invalid authority address %s: %s", authority, err))
@@ -59,6 +61,7 @@ func NewKeeper(
 		bankKeeper:    bankKeeper,
 		authKeeper:    authKeeper,
 		stakingKeeper: stakingKeeper,
+		groupKeeper:   groupKeeper,
 		Params:        collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
 		LastDailyRollupDate: collections.NewItem(
 			sb,
