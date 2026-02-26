@@ -27,6 +27,7 @@
   - `admin_only`
   - `allowlisted`
   - `permissionless`
+- Authority defaults to `x/gov`, with optional runtime override via `TOKENCHAIN_LOYALTY_AUTHORITY`
 - Authority-gated allowlist management
 - Verified token registry:
   - metadata

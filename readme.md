@@ -10,6 +10,7 @@ This repository now includes a working chain baseline with:
 - IBC transfer + ICA scaffolding enabled
 - CosmWasm runtime (`x/wasm`) integrated in app, CLI, and config wiring
 - governance-safe ops modules enabled: `x/upgrade`, `x/circuit`, `x/feegrant`, `x/authz`, `x/group`
+- optional loyalty authority override via `TOKENCHAIN_LOYALTY_AUTHORITY` (defaults to `x/gov` if unset)
 
 ## Loyalty Module (`x/loyalty`)
 
@@ -64,3 +65,4 @@ This script initializes:
 
 - Go `1.24+` is required.
 - Default chain genesis policy keeps wasm uploads permissioned (`Nobody`) until explicitly opened by governance.
+- If you want founder-operated day-1 loyalty admin flows on testnet, set `TOKENCHAIN_LOYALTY_AUTHORITY=<founder-address>` on every validator.

@@ -1,6 +1,8 @@
 package app
 
 import (
+	"os"
+	"strings"
 	"time"
 
 	_ "tokenchain/x/loyalty/module"
@@ -73,6 +75,12 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v10/modules/core/exported"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
+
+const loyaltyAuthorityEnvVar = "TOKENCHAIN_LOYALTY_AUTHORITY"
+
+func loyaltyModuleAuthority() string {
+	return strings.TrimSpace(os.Getenv(loyaltyAuthorityEnvVar))
+}
 
 var (
 	moduleAccPerms = []*authmodulev1.ModuleAccountPermission{
@@ -278,7 +286,7 @@ var (
 			},
 			{
 				Name:   loyaltymoduletypes.ModuleName,
-				Config: appconfig.WrapAny(&loyaltymoduletypes.Module{}),
+				Config: appconfig.WrapAny(&loyaltymoduletypes.Module{Authority: loyaltyModuleAuthority()}),
 			},
 			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},
