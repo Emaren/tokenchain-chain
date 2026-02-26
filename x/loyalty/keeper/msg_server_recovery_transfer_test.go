@@ -104,14 +104,20 @@ func TestExecuteRecoveryTransfer(t *testing.T) {
 	require.EqualValues(t, opID, queueResp.Id)
 
 	_, err = srv.ExecuteRecoveryTransfer(baseCtx, &types.MsgExecuteRecoveryTransfer{
-		Creator: sample.AccAddress(),
+		Creator: creator,
 		Id:      opID,
 	})
 	require.ErrorIs(t, err, types.ErrRecoveryTooEarly)
 
 	execCtx := baseCtx.WithBlockTime(time.Unix(1700001000+3601, 0))
-	executeResp, err := srv.ExecuteRecoveryTransfer(execCtx, &types.MsgExecuteRecoveryTransfer{
+	_, err = srv.ExecuteRecoveryTransfer(execCtx, &types.MsgExecuteRecoveryTransfer{
 		Creator: sample.AccAddress(),
+		Id:      opID,
+	})
+	require.ErrorIs(t, err, types.ErrRecoveryUnauthorized)
+
+	executeResp, err := srv.ExecuteRecoveryTransfer(execCtx, &types.MsgExecuteRecoveryTransfer{
+		Creator: creator,
 		Id:      opID,
 	})
 	require.NoError(t, err)

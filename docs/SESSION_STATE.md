@@ -16,6 +16,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - no-seizure default policy handling
   - strict full-denom minting (`factory/{issuer}/{subdenom}`) with on-chain hard cap enforcement
   - recovery policy hardening: `x/group` policy existence checks + network-aware timelock minimums
+  - recovery execute authorization tightened (policy/authority only)
   - accrual and claim ledger
   - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker
   - richer tx responses for create/mint/recovery operations (denom, minted supply, operation IDs/status/timestamps)

@@ -48,6 +48,10 @@ func (k msgServer) ExecuteRecoveryTransfer(ctx context.Context, msg *types.MsgEx
 	if !token.SeizureOptIn {
 		return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "token recovery is disabled")
 	}
+	isAuthority := k.ensureAuthority(msg.Creator) == nil
+	if msg.Creator != token.RecoveryGroupPolicy && !isAuthority {
+		return nil, errorsmod.Wrap(types.ErrRecoveryUnauthorized, "only recovery group policy or authority can execute recovery")
+	}
 
 	fromAddr, err := k.addressCodec.StringToBytes(op.FromAddress)
 	if err != nil {

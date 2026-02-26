@@ -42,7 +42,7 @@
   - timelock minimum follows network mode:
     - testnet => `testnet_timelock_hours`
     - mainnet => `mainnet_timelock_hours`
-  - `execute-recovery-transfer` (after timelock)
+  - `execute-recovery-transfer` (policy/authority only, after timelock)
   - `cancel-recovery-transfer` (policy/authority only)
 - Hard cap enforcement in mint path (`mint-verified-token`)
 - Reward accrual ledger and claim path:

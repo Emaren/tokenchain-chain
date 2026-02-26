@@ -26,7 +26,7 @@ This repository now includes a working chain baseline with:
   - timelock minimum is enforced per network (`testnet_timelock_hours` vs `mainnet_timelock_hours`)
 - on-chain recovery operation queue with timelock execution:
   - `queue-recovery-transfer`
-  - `execute-recovery-transfer`
+  - `execute-recovery-transfer` (policy/authority gated)
   - `cancel-recovery-transfer`
 - hard-cap mint checks (`mint-verified-token` cannot exceed `max_supply`)
 - on-chain accrual ledger (`rewardaccrual`) and user claim flow (`claim-reward`)
