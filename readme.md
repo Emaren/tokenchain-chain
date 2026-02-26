@@ -23,6 +23,7 @@ This repository now includes a working chain baseline with:
 - tokenfactory-style business denom canonicalization (`factory/{issuer}/{subdenom}`)
 - no-seizure default (`seizure_opt_in_default=false`)
 - optional recovery policy metadata (`recovery_group_policy`, timelock hours)
+- per-token merchant incentive routing config (`merchant_incentive_stakers_bps` / `merchant_incentive_treasury_bps`)
 - recovery policy hardening:
   - `recovery_group_policy` must resolve to an existing `x/group` policy account
   - timelock minimum is enforced per network (`testnet_timelock_hours` vs `mainnet_timelock_hours`)
@@ -36,6 +37,7 @@ This repository now includes a working chain baseline with:
 - hard-cap mint checks (`mint-verified-token` cannot exceed `max_supply`)
 - on-chain accrual ledger (`rewardaccrual`) and user claim flow (`claim-reward`)
 - explicit reward pool funding tx (`fund-reward-pool`) to provision claim liquidity from operator wallets
+- per-token routing update tx (`set-merchant-incentive-routing`) with owner/authority controls and 10000 bps validation
 - enriched tx responses for `record-reward-accrual` and `claim-reward` (amounts, denom, key/date)
 - explicit overflow protection for reward accrual accounting (`ErrAccrualOverflow`, code `1117`)
 - automatic daily rollup boundary in begin-block using `America/Edmonton`, with on-chain rollup marker persistence

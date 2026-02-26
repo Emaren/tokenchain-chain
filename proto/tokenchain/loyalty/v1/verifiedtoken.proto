@@ -19,4 +19,6 @@ message Verifiedtoken {
   uint64 recovery_timelock_hours = 12;
   string creator = 13;
   bool admin_renounced = 14;
+  uint64 merchant_incentive_stakers_bps = 15;
+  uint64 merchant_incentive_treasury_bps = 16;
 }

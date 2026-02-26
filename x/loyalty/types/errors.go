@@ -26,4 +26,5 @@ var (
 	ErrAdminRenounced         = errors.Register(ModuleName, 1115, "token admin has been renounced")
 	ErrAdminRenouncePolicy    = errors.Register(ModuleName, 1116, "token admin renounce is not allowed with recovery-enabled policy")
 	ErrAccrualOverflow        = errors.Register(ModuleName, 1117, "reward accrual amount overflow")
+	ErrMerchantRouting        = errors.Register(ModuleName, 1118, "invalid merchant incentive routing configuration")
 )

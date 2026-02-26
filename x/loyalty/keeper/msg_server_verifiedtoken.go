@@ -62,22 +62,29 @@ func (k msgServer) CreateVerifiedtoken(ctx context.Context, msg *types.MsgCreate
 	if err != nil {
 		return nil, err
 	}
+	merchantStakersBps := types.DefaultMerchantIncentiveStakersBps
+	merchantTreasuryBps := types.DefaultMerchantIncentiveTreasuryBps
+	if err := types.ValidateMerchantIncentiveRouting(merchantStakersBps, merchantTreasuryBps); err != nil {
+		return nil, errorsmod.Wrap(types.ErrMerchantRouting, err.Error())
+	}
 
 	var verifiedtoken = types.Verifiedtoken{
-		Creator:               msg.Creator,
-		Denom:                 msg.Denom,
-		Issuer:                msg.Issuer,
-		Name:                  msg.Name,
-		Symbol:                msg.Symbol,
-		Description:           msg.Description,
-		Website:               msg.Website,
-		MaxSupply:             msg.MaxSupply,
-		MintedSupply:          0,
-		Verified:              msg.Verified,
-		SeizureOptIn:          msg.SeizureOptIn,
-		RecoveryGroupPolicy:   recoveryPolicy,
-		RecoveryTimelockHours: recoveryTimelock,
-		AdminRenounced:        false,
+		Creator:                      msg.Creator,
+		Denom:                        msg.Denom,
+		Issuer:                       msg.Issuer,
+		Name:                         msg.Name,
+		Symbol:                       msg.Symbol,
+		Description:                  msg.Description,
+		Website:                      msg.Website,
+		MaxSupply:                    msg.MaxSupply,
+		MintedSupply:                 0,
+		Verified:                     msg.Verified,
+		SeizureOptIn:                 msg.SeizureOptIn,
+		RecoveryGroupPolicy:          recoveryPolicy,
+		RecoveryTimelockHours:        recoveryTimelock,
+		AdminRenounced:               false,
+		MerchantIncentiveStakersBps:  merchantStakersBps,
+		MerchantIncentiveTreasuryBps: merchantTreasuryBps,
 	}
 
 	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {
@@ -159,20 +166,22 @@ func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdate
 	}
 
 	var verifiedtoken = types.Verifiedtoken{
-		Creator:               val.Creator,
-		Denom:                 msg.Denom,
-		Issuer:                msg.Issuer,
-		Name:                  msg.Name,
-		Symbol:                msg.Symbol,
-		Description:           msg.Description,
-		Website:               msg.Website,
-		MaxSupply:             msg.MaxSupply,
-		MintedSupply:          val.MintedSupply,
-		Verified:              msg.Verified,
-		SeizureOptIn:          msg.SeizureOptIn,
-		RecoveryGroupPolicy:   recoveryPolicy,
-		RecoveryTimelockHours: recoveryTimelock,
-		AdminRenounced:        val.AdminRenounced,
+		Creator:                      val.Creator,
+		Denom:                        msg.Denom,
+		Issuer:                       msg.Issuer,
+		Name:                         msg.Name,
+		Symbol:                       msg.Symbol,
+		Description:                  msg.Description,
+		Website:                      msg.Website,
+		MaxSupply:                    msg.MaxSupply,
+		MintedSupply:                 val.MintedSupply,
+		Verified:                     msg.Verified,
+		SeizureOptIn:                 msg.SeizureOptIn,
+		RecoveryGroupPolicy:          recoveryPolicy,
+		RecoveryTimelockHours:        recoveryTimelock,
+		AdminRenounced:               val.AdminRenounced,
+		MerchantIncentiveStakersBps:  val.MerchantIncentiveStakersBps,
+		MerchantIncentiveTreasuryBps: val.MerchantIncentiveTreasuryBps,
 	}
 
 	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {

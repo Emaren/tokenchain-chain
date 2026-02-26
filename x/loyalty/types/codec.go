@@ -24,6 +24,10 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 	)
 
 	registrar.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgFundRewardPool{},
+	)
+
+	registrar.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgClaimReward{},
 	)
 
@@ -38,6 +42,8 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 	)
 
 	registrar.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgRenounceTokenAdmin{},
+		&MsgSetMerchantIncentiveRouting{},
 		&MsgCreateVerifiedtoken{},
 		&MsgUpdateVerifiedtoken{},
 		&MsgDeleteVerifiedtoken{},

@@ -10,7 +10,7 @@ const (
 	CreationModeAllowlisted    = "allowlisted"
 	CreationModePermissionless = "permissionless"
 
-	totalBPS uint64 = 10_000
+	TotalBPS uint64 = 10_000
 )
 
 // DefaultCreationMode represents the CreationMode default value.
@@ -36,6 +36,12 @@ var DefaultFeeSplitMerchantPoolBps uint64 = 1000
 
 // DefaultSeizureOptInDefault represents the SeizureOptInDefault default value.
 var DefaultSeizureOptInDefault bool = false
+
+// DefaultMerchantIncentiveStakersBps represents the default per-token share of Bucket C routed to token stakers.
+var DefaultMerchantIncentiveStakersBps uint64 = 5000
+
+// DefaultMerchantIncentiveTreasuryBps represents the default per-token share of Bucket C routed to merchant treasury.
+var DefaultMerchantIncentiveTreasuryBps uint64 = 5000
 
 // NewParams creates a new Params instance.
 func NewParams(
@@ -112,8 +118,8 @@ func (p Params) Validate() error {
 		return fmt.Errorf("mainnet timelock must be greater than or equal to testnet timelock")
 	}
 
-	if p.FeeSplitValidatorBps+p.FeeSplitTokenStakersBps+p.FeeSplitMerchantPoolBps != totalBPS {
-		return fmt.Errorf("fee split bps must total %d", totalBPS)
+	if p.FeeSplitValidatorBps+p.FeeSplitTokenStakersBps+p.FeeSplitMerchantPoolBps != TotalBPS {
+		return fmt.Errorf("fee split bps must total %d", TotalBPS)
 	}
 
 	return nil
@@ -158,7 +164,7 @@ func validateMainnetTimelockHours(v uint64) error {
 
 // validateFeeSplitValidatorBps validates the FeeSplitValidatorBps parameter.
 func validateFeeSplitValidatorBps(v uint64) error {
-	if v > totalBPS {
+	if v > TotalBPS {
 		return fmt.Errorf("validator fee split exceeds 100%%")
 	}
 	return nil
@@ -166,7 +172,7 @@ func validateFeeSplitValidatorBps(v uint64) error {
 
 // validateFeeSplitTokenStakersBps validates the FeeSplitTokenStakersBps parameter.
 func validateFeeSplitTokenStakersBps(v uint64) error {
-	if v > totalBPS {
+	if v > TotalBPS {
 		return fmt.Errorf("token stakers fee split exceeds 100%%")
 	}
 	return nil
@@ -174,7 +180,7 @@ func validateFeeSplitTokenStakersBps(v uint64) error {
 
 // validateFeeSplitMerchantPoolBps validates the FeeSplitMerchantPoolBps parameter.
 func validateFeeSplitMerchantPoolBps(v uint64) error {
-	if v > totalBPS {
+	if v > TotalBPS {
 		return fmt.Errorf("merchant pool fee split exceeds 100%%")
 	}
 	return nil
@@ -183,5 +189,19 @@ func validateFeeSplitMerchantPoolBps(v uint64) error {
 // validateSeizureOptInDefault validates the SeizureOptInDefault parameter.
 func validateSeizureOptInDefault(v bool) error {
 	_ = v
+	return nil
+}
+
+// ValidateMerchantIncentiveRouting validates per-token Bucket C routing split.
+func ValidateMerchantIncentiveRouting(stakersBps, treasuryBps uint64) error {
+	if stakersBps > TotalBPS {
+		return fmt.Errorf("merchant incentive stakers bps exceeds 100%%")
+	}
+	if treasuryBps > TotalBPS {
+		return fmt.Errorf("merchant incentive treasury bps exceeds 100%%")
+	}
+	if stakersBps+treasuryBps != TotalBPS {
+		return fmt.Errorf("merchant incentive routing bps must total %d", TotalBPS)
+	}
 	return nil
 }

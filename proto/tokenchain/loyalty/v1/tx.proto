@@ -36,6 +36,9 @@ service Msg {
   // RenounceTokenAdmin defines the RenounceTokenAdmin RPC.
   rpc RenounceTokenAdmin(MsgRenounceTokenAdmin) returns (MsgRenounceTokenAdminResponse);
 
+  // SetMerchantIncentiveRouting defines the SetMerchantIncentiveRouting RPC.
+  rpc SetMerchantIncentiveRouting(MsgSetMerchantIncentiveRouting) returns (MsgSetMerchantIncentiveRoutingResponse);
+
   // DeleteVerifiedtoken defines the DeleteVerifiedtoken RPC.
   rpc DeleteVerifiedtoken(MsgDeleteVerifiedtoken) returns (MsgDeleteVerifiedtokenResponse);
 
@@ -178,6 +181,22 @@ message MsgRenounceTokenAdmin {
 message MsgRenounceTokenAdminResponse {
   string denom = 1;
   bool admin_renounced = 2;
+}
+
+// MsgSetMerchantIncentiveRouting defines per-token Bucket C routing between stakers and merchant treasury.
+message MsgSetMerchantIncentiveRouting {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+  uint64 merchant_incentive_stakers_bps = 3;
+  uint64 merchant_incentive_treasury_bps = 4;
+}
+
+// MsgSetMerchantIncentiveRoutingResponse defines the MsgSetMerchantIncentiveRoutingResponse message.
+message MsgSetMerchantIncentiveRoutingResponse {
+  string denom = 1;
+  uint64 merchant_incentive_stakers_bps = 2;
+  uint64 merchant_incentive_treasury_bps = 3;
 }
 
 // MsgDeleteVerifiedtoken defines the MsgDeleteVerifiedtoken message.

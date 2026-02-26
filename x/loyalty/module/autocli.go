@@ -142,6 +142,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
 				},
 				{
+					RpcMethod:      "SetMerchantIncentiveRouting",
+					Use:            "set-merchant-incentive-routing [denom] [merchant-incentive-stakers-bps] [merchant-incentive-treasury-bps]",
+					Short:          "Set per-token merchant incentive routing between stakers and treasury",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "merchant_incentive_stakers_bps"}, {ProtoField: "merchant_incentive_treasury_bps"}},
+				},
+				{
 					RpcMethod:      "DeleteVerifiedtoken",
 					Use:            "delete-verifiedtoken [denom]",
 					Short:          "Delete verifiedtoken",
