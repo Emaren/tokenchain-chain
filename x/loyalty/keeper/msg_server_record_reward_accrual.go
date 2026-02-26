@@ -68,5 +68,12 @@ func (k msgServer) RecordRewardAccrual(ctx context.Context, msg *types.MsgRecord
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
 	}
 
-	return &types.MsgRecordRewardAccrualResponse{}, nil
+	return &types.MsgRecordRewardAccrualResponse{
+		Key:         key,
+		Address:     record.Address,
+		Denom:       record.Denom,
+		AmountAdded: msg.Amount,
+		TotalAmount: record.Amount,
+		RollupDate:  rollupDate,
+	}, nil
 }

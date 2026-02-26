@@ -45,5 +45,9 @@ func (k msgServer) ClaimReward(ctx context.Context, msg *types.MsgClaimReward) (
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
 	}
 
-	return &types.MsgClaimRewardResponse{}, nil
+	return &types.MsgClaimRewardResponse{
+		Address:       msg.Creator,
+		Denom:         msg.Denom,
+		AmountClaimed: record.Amount,
+	}, nil
 }

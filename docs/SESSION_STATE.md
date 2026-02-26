@@ -24,7 +24,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - daily rollup status query endpoint (`/tokenchain/loyalty/v1/daily_rollup/status`)
   - filtered reward accrual query endpoint (`/tokenchain/loyalty/v1/rewardaccruals/filter`)
   - filtered recovery operations query endpoint (`/tokenchain/loyalty/v1/recoveryoperations/filter`)
-  - richer tx responses for create/mint/recovery operations (denom, minted supply, operation IDs/status/timestamps)
+  - richer tx responses for create/mint/recovery/accrual/claim operations (denom, minted supply, IDs/status/timestamps, amounts, rollup date)
 - Inflation suppression hook added in app init flow.
 - CosmWasm runtime integration completed:
   - wasm keeper + module registration in app runtime (`app/wasm.go`)

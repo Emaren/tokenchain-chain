@@ -232,7 +232,11 @@ message MsgClaimReward {
 }
 
 // MsgClaimRewardResponse defines the MsgClaimRewardResponse message.
-message MsgClaimRewardResponse {}
+message MsgClaimRewardResponse {
+  string address = 1;
+  string denom = 2;
+  uint64 amount_claimed = 3;
+}
 
 // MsgRecordRewardAccrual defines the MsgRecordRewardAccrual message.
 message MsgRecordRewardAccrual {
@@ -245,7 +249,14 @@ message MsgRecordRewardAccrual {
 }
 
 // MsgRecordRewardAccrualResponse defines the MsgRecordRewardAccrualResponse message.
-message MsgRecordRewardAccrualResponse {}
+message MsgRecordRewardAccrualResponse {
+  string key = 1;
+  string address = 2;
+  string denom = 3;
+  uint64 amount_added = 4;
+  uint64 total_amount = 5;
+  string rollup_date = 6;
+}
 
 // MsgQueueRecoveryTransfer defines the MsgQueueRecoveryTransfer message.
 message MsgQueueRecoveryTransfer {
