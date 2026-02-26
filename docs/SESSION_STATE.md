@@ -19,6 +19,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - recovery execute authorization tightened (policy/authority only)
   - accrual and claim ledger
   - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker
+  - daily rollup status query endpoint (`/tokenchain/loyalty/v1/daily_rollup/status`)
   - richer tx responses for create/mint/recovery operations (denom, minted supply, operation IDs/status/timestamps)
 - Inflation suppression hook added in app init flow.
 - CosmWasm runtime integration completed:

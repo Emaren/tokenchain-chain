@@ -60,6 +60,11 @@ service Query {
   rpc ListRecoveryoperation(QueryAllRecoveryoperationRequest) returns (QueryAllRecoveryoperationResponse) {
     option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperation";
   }
+
+  // DailyRollupStatus returns rollup boundary status for the configured timezone.
+  rpc DailyRollupStatus(QueryDailyRollupStatusRequest) returns (QueryDailyRollupStatusResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/daily_rollup/status";
+  }
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -156,4 +161,16 @@ message QueryAllRecoveryoperationRequest {
 message QueryAllRecoveryoperationResponse {
   repeated Recoveryoperation recoveryoperation = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryDailyRollupStatusRequest defines the QueryDailyRollupStatusRequest message.
+message QueryDailyRollupStatusRequest {}
+
+// QueryDailyRollupStatusResponse defines the QueryDailyRollupStatusResponse message.
+message QueryDailyRollupStatusResponse {
+  string timezone = 1;
+  string current_local_date = 2;
+  string last_daily_rollup_date = 3;
+  bool has_rolled_today = 4;
+  string next_rollup_date = 5;
 }
