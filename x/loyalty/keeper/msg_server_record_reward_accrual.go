@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"errors"
+	"math"
 	"time"
 
 	"tokenchain/x/loyalty/types"
@@ -62,6 +63,9 @@ func (k msgServer) RecordRewardAccrual(ctx context.Context, msg *types.MsgRecord
 		}
 	}
 
+	if record.Amount > math.MaxUint64-msg.Amount {
+		return nil, errorsmod.Wrap(types.ErrAccrualOverflow, "accrual amount would overflow uint64")
+	}
 	record.Amount += msg.Amount
 	record.LastRollupDate = rollupDate
 	if err := k.Rewardaccrual.Set(ctx, key, record); err != nil {

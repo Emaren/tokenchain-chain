@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"math"
 	"testing"
 
 	sdkmath "cosmossdk.io/math"
@@ -107,4 +108,36 @@ func TestClaimRewardInsufficientPool(t *testing.T) {
 	record, getErr := f.keeper.Rewardaccrual.Get(f.ctx, key)
 	require.NoError(t, getErr)
 	require.EqualValues(t, 50, record.Amount)
+}
+
+func TestRecordRewardAccrualOverflow(t *testing.T) {
+	f := initFixture(t)
+	srv := keeper.NewMsgServerImpl(f.keeper)
+	creator := authorityAddress(t, f)
+	address := sample.AccAddress()
+	key := address + "|utoken"
+	existingAmount := uint64(math.MaxUint64 - 5)
+
+	require.NoError(t, f.keeper.Rewardaccrual.Set(f.ctx, key, types.Rewardaccrual{
+		Creator:        creator,
+		Key:            key,
+		Address:        address,
+		Denom:          "utoken",
+		Amount:         existingAmount,
+		LastRollupDate: "2026-02-25",
+	}))
+
+	_, err := srv.RecordRewardAccrual(f.ctx, &types.MsgRecordRewardAccrual{
+		Creator: creator,
+		Address: address,
+		Denom:   "utoken",
+		Amount:  10,
+		Date:    "2026-02-26",
+	})
+	require.ErrorIs(t, err, types.ErrAccrualOverflow)
+
+	record, getErr := f.keeper.Rewardaccrual.Get(f.ctx, key)
+	require.NoError(t, getErr)
+	require.EqualValues(t, existingAmount, record.Amount)
+	require.Equal(t, "2026-02-25", record.LastRollupDate)
 }
