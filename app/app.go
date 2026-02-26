@@ -3,7 +3,6 @@ package app
 import (
 	"io"
 
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	clienthelpers "cosmossdk.io/client/v2/helpers"
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/depinject"
@@ -11,8 +10,10 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 
 	abci "github.com/cometbft/cometbft/abci/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -226,6 +227,12 @@ func New(
 
 	if err := app.Load(loadLatest); err != nil {
 		panic(err)
+	}
+	if loadLatest {
+		ctx := app.NewUncachedContext(true, tmproto.Header{})
+		if err := app.WasmKeeper.InitializePinnedCodes(ctx); err != nil {
+			panic(err)
+		}
 	}
 
 	return app

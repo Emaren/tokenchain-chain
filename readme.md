@@ -8,6 +8,7 @@ This repository now includes a working chain baseline with:
 - coin type: `118`
 - no inflation at init (mint module inflation fields forced to zero during genesis init)
 - IBC transfer + ICA scaffolding enabled
+- CosmWasm runtime (`x/wasm`) integrated in app, CLI, and config wiring
 - governance-safe ops modules enabled: `x/upgrade`, `x/circuit`, `x/feegrant`, `x/authz`, `x/group`
 
 ## Loyalty Module (`x/loyalty`)
@@ -56,8 +57,9 @@ This script initializes:
 - founder + treasury keys
 - founder validator gentx
 - fixed-supply genesis accounts
+- wasm upload access pinned to founder on local testnet bootstrap
 
 ## Notes
 
 - Go `1.24+` is required.
-- CosmWasm runtime integration is the next major step (module scaffolding and policy are in place; wasm keeper wiring is not yet added in this pass).
+- Default chain genesis policy keeps wasm uploads permissioned (`Nobody`) until explicitly opened by governance.

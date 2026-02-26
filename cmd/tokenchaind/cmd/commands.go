@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -58,6 +59,7 @@ func initRootCmd(
 
 // addModuleInitFlags adds more flags to the start command.
 func addModuleInitFlags(startCmd *cobra.Command) {
+	wasm.AddModuleInitFlags(startCmd)
 }
 
 func queryCommand() *cobra.Command {

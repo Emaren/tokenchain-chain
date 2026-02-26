@@ -3,14 +3,15 @@ package app
 import (
 	"fmt"
 
+	"cosmossdk.io/core/appmodule"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"cosmossdk.io/core/appmodule"
-	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -65,15 +66,17 @@ func (app *App) registerWasmModules(appOpts types.AppOptions) error {
 }
 
 // RegisterWasm manually registers wasm interfaces for client-side commands.
-func RegisterWasm(cdc codec.Codec) module.AppModuleBasic {
-	wasmBasic := wasm.AppModuleBasic{}
-	wasmBasic.RegisterInterfaces(cdc.InterfaceRegistry())
-	return module.CoreAppModuleBasicAdaptor(wasmtypes.ModuleName, wasmBasic)
-}
+// This mirrors the existing manual registration pattern used for legacy IBC modules.
+func RegisterWasm(cdc codec.Codec) map[string]appmodule.AppModule {
+	modules := map[string]appmodule.AppModule{
+		wasmtypes.ModuleName: wasm.NewAppModule(cdc, nil, nil, nil, nil, nil, nil),
+	}
 
-// RegisterWasmModule returns a wasm app module for autocli wiring.
-func RegisterWasmModule(cdc codec.Codec) appmodule.AppModule {
-	wasmBasic := wasm.AppModuleBasic{}
-	wasmBasic.RegisterInterfaces(cdc.InterfaceRegistry())
-	return wasm.NewAppModule(cdc, nil, nil, nil, nil, nil, nil)
+	for _, m := range modules {
+		if mr, ok := m.(module.AppModuleBasic); ok {
+			mr.RegisterInterfaces(cdc.InterfaceRegistry())
+		}
+	}
+
+	return modules
 }

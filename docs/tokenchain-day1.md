@@ -19,6 +19,7 @@
 - `x/feegrant`
 - `x/authz`
 - `x/group`
+- `x/wasm` (CosmWasm runtime with permissioned upload default)
 - IBC transfer + ICA (legacy/manual wiring)
 
 ## Loyalty Module Highlights (`x/loyalty`)
@@ -40,7 +41,6 @@
 - Fee split parameter defaults: `7000/2000/1000` bps
 
 ## Explicitly Deferred
-- Native CosmWasm runtime keeper wiring (`x/wasm`)
 - Full TokenFactory module parity
 - Automated end-block daily reward rollup scheduler
 - Osmosis relayer automation and production ops manifests
