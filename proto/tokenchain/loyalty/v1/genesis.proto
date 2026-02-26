@@ -5,6 +5,7 @@ package tokenchain.loyalty.v1;
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "tokenchain/loyalty/v1/creatorallowlist.proto";
+import "tokenchain/loyalty/v1/merchantallocation.proto";
 import "tokenchain/loyalty/v1/params.proto";
 import "tokenchain/loyalty/v1/recoveryoperation.proto";
 import "tokenchain/loyalty/v1/rewardaccrual.proto";
@@ -25,4 +26,5 @@ message GenesisState {
   repeated Recoveryoperation recoveryoperation_list = 5 [(gogoproto.nullable) = false];
   uint64 recoveryoperation_count = 6;
   string last_daily_rollup_date = 7;
+  repeated Merchantallocation merchantallocation_map = 8 [(gogoproto.nullable) = false];
 }

@@ -7,6 +7,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "tokenchain/loyalty/v1/creatorallowlist.proto";
+import "tokenchain/loyalty/v1/merchantallocation.proto";
 import "tokenchain/loyalty/v1/params.proto";
 import "tokenchain/loyalty/v1/recoveryoperation.proto";
 import "tokenchain/loyalty/v1/rewardaccrual.proto";
@@ -59,6 +60,21 @@ service Query {
   // FilterRewardaccrual returns reward accrual records filtered by address/denom fields.
   rpc FilterRewardaccrual(QueryFilterRewardaccrualRequest) returns (QueryFilterRewardaccrualResponse) {
     option (google.api.http).get = "/tokenchain/loyalty/v1/rewardaccruals/filter";
+  }
+
+  // ListMerchantallocation Queries a list of Merchantallocation items.
+  rpc GetMerchantallocation(QueryGetMerchantallocationRequest) returns (QueryGetMerchantallocationResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/merchantallocation/{key}";
+  }
+
+  // ListMerchantallocation defines the ListMerchantallocation RPC.
+  rpc ListMerchantallocation(QueryAllMerchantallocationRequest) returns (QueryAllMerchantallocationResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/merchantallocation";
+  }
+
+  // FilterMerchantallocation returns merchant allocation records filtered by date/denom fields.
+  rpc FilterMerchantallocation(QueryFilterMerchantallocationRequest) returns (QueryFilterMerchantallocationResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/merchantallocations/filter";
   }
 
   // ListRecoveryoperation Queries a list of Recoveryoperation items.
@@ -177,6 +193,40 @@ message QueryFilterRewardaccrualRequest {
 // QueryFilterRewardaccrualResponse defines the QueryFilterRewardaccrualResponse message.
 message QueryFilterRewardaccrualResponse {
   repeated Rewardaccrual rewardaccrual = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryGetMerchantallocationRequest defines the QueryGetMerchantallocationRequest message.
+message QueryGetMerchantallocationRequest {
+  string key = 1;
+}
+
+// QueryGetMerchantallocationResponse defines the QueryGetMerchantallocationResponse message.
+message QueryGetMerchantallocationResponse {
+  Merchantallocation merchantallocation = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAllMerchantallocationRequest defines the QueryAllMerchantallocationRequest message.
+message QueryAllMerchantallocationRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryAllMerchantallocationResponse defines the QueryAllMerchantallocationResponse message.
+message QueryAllMerchantallocationResponse {
+  repeated Merchantallocation merchantallocation = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryFilterMerchantallocationRequest defines the QueryFilterMerchantallocationRequest message.
+message QueryFilterMerchantallocationRequest {
+  string date = 1;
+  string denom = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryFilterMerchantallocationResponse defines the QueryFilterMerchantallocationResponse message.
+message QueryFilterMerchantallocationResponse {
+  repeated Merchantallocation merchantallocation = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

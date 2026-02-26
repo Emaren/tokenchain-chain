@@ -73,6 +73,10 @@ func rewardAccrualKey(address, denom string) string {
 	return fmt.Sprintf("%s|%s", address, denom)
 }
 
+func merchantAllocationKey(date, denom string) string {
+	return fmt.Sprintf("%s|%s", date, denom)
+}
+
 func minimumRecoveryTimelockHours(ctx context.Context, params types.Params) uint64 {
 	chainID := strings.ToLower(sdk.UnwrapSDKContext(ctx).ChainID())
 	if chainID == "" || strings.Contains(chainID, "testnet") || strings.Contains(chainID, "localnet") {

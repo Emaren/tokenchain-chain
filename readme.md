@@ -38,11 +38,14 @@ This repository now includes a working chain baseline with:
 - on-chain accrual ledger (`rewardaccrual`) and user claim flow (`claim-reward`)
 - explicit reward pool funding tx (`fund-reward-pool`) to provision claim liquidity from operator wallets
 - per-token routing update tx (`set-merchant-incentive-routing`) with owner/authority controls and 10000 bps validation
+- on-chain merchant allocation ledger (`merchantallocation`) keyed by `YYYY-MM-DD|denom`
+- authority-gated allocation recorder tx (`record-merchant-allocation`) with computed staker/treasury routing snapshots
 - enriched tx responses for `record-reward-accrual` and `claim-reward` (amounts, denom, key/date)
 - explicit overflow protection for reward accrual accounting (`ErrAccrualOverflow`, code `1117`)
 - automatic daily rollup boundary in begin-block using `America/Edmonton`, with on-chain rollup marker persistence
 - daily rollup status query (`/tokenchain/loyalty/v1/daily_rollup/status`) for dashboard/indexer consumption
 - reward accrual filter query (`/tokenchain/loyalty/v1/rewardaccruals/filter`) by address/denom + pagination
+- merchant allocation filter query (`/tokenchain/loyalty/v1/merchantallocations/filter`) by date/denom + pagination
 - reward pool balance query (`/tokenchain/loyalty/v1/reward_pool/balance?denom=...`) for claim solvency visibility
 - recovery operations filter query (`/tokenchain/loyalty/v1/recoveryoperations/filter`) with status/token/address + pagination
 - daily rollup timezone param default: `America/Edmonton`

@@ -22,6 +22,7 @@ func TestGenesis(t *testing.T) {
 			{Denom: denom1, Issuer: creator, Name: "Genesis 1", Symbol: "G1"},
 		},
 		RewardaccrualMap:       []types.Rewardaccrual{{Key: "0"}, {Key: "1"}},
+		MerchantallocationMap:  []types.Merchantallocation{{Key: "2026-02-25|factory/a/wheat"}, {Key: "2026-02-26|factory/b/stone"}},
 		RecoveryoperationList:  []types.Recoveryoperation{{Id: 0}, {Id: 1}},
 		RecoveryoperationCount: 2,
 		LastDailyRollupDate:    "2026-02-26",
@@ -36,6 +37,7 @@ func TestGenesis(t *testing.T) {
 	require.EqualExportedValues(t, genesisState.CreatorallowlistMap, got.CreatorallowlistMap)
 	require.EqualExportedValues(t, genesisState.VerifiedtokenMap, got.VerifiedtokenMap)
 	require.EqualExportedValues(t, genesisState.RewardaccrualMap, got.RewardaccrualMap)
+	require.EqualExportedValues(t, genesisState.MerchantallocationMap, got.MerchantallocationMap)
 	require.EqualExportedValues(t, genesisState.RecoveryoperationList, got.RecoveryoperationList)
 	require.Equal(t, genesisState.RecoveryoperationCount, got.RecoveryoperationCount)
 

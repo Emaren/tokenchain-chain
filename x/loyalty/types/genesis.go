@@ -8,8 +8,14 @@ import (
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		Params:              DefaultParams(),
-		CreatorallowlistMap: []Creatorallowlist{}, VerifiedtokenMap: []Verifiedtoken{}, RewardaccrualMap: []Rewardaccrual{}, RecoveryoperationList: []Recoveryoperation{}}
+		Params:                 DefaultParams(),
+		CreatorallowlistMap:    []Creatorallowlist{},
+		VerifiedtokenMap:       []Verifiedtoken{},
+		RewardaccrualMap:       []Rewardaccrual{},
+		MerchantallocationMap:  []Merchantallocation{},
+		RecoveryoperationList:  []Recoveryoperation{},
+		RecoveryoperationCount: 0,
+	}
 }
 
 // Validate performs basic genesis state validation returning an error upon any
@@ -41,6 +47,19 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for rewardaccrual")
 		}
 		rewardaccrualIndexMap[index] = struct{}{}
+	}
+	merchantallocationIndexMap := make(map[string]struct{})
+	for _, elem := range gs.MerchantallocationMap {
+		index := fmt.Sprint(elem.Key)
+		if _, ok := merchantallocationIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for merchantallocation")
+		}
+		merchantallocationIndexMap[index] = struct{}{}
+		if elem.Date != "" {
+			if _, err := time.Parse("2006-01-02", elem.Date); err != nil {
+				return fmt.Errorf("invalid merchantallocation date: %w", err)
+			}
+		}
 	}
 	recoveryoperationIdMap := make(map[uint64]bool)
 	recoveryoperationCount := gs.GetRecoveryoperationCount()

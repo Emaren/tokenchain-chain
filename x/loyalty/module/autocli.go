@@ -65,6 +65,23 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:     "Filter reward accrual records by address/denom",
 				},
 				{
+					RpcMethod: "ListMerchantallocation",
+					Use:       "list-merchantallocation",
+					Short:     "List all merchantallocation",
+				},
+				{
+					RpcMethod:      "GetMerchantallocation",
+					Use:            "get-merchantallocation [key]",
+					Short:          "Gets a merchantallocation",
+					Alias:          []string{"show-merchantallocation"},
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "key"}},
+				},
+				{
+					RpcMethod: "FilterMerchantallocation",
+					Use:       "filter-merchantallocation",
+					Short:     "Filter merchant allocation records by date/denom",
+				},
+				{
 					RpcMethod: "ListRecoveryoperation",
 					Use:       "list-recoveryoperation",
 					Short:     "List all recoveryoperation",
@@ -194,6 +211,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "record-reward-accrual [address] [denom] [amount] [date]",
 					Short:          "Send a record-reward-accrual tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "address"}, {ProtoField: "denom"}, {ProtoField: "amount"}, {ProtoField: "date"}},
+				},
+				{
+					RpcMethod:      "RecordMerchantAllocation",
+					Use:            "record-merchant-allocation [date] [denom] [activity-score] [bucket-c-amount]",
+					Short:          "Record a daily merchant allocation for Bucket C",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "date"}, {ProtoField: "denom"}, {ProtoField: "activity_score"}, {ProtoField: "bucket_c_amount"}},
 				},
 				{
 					RpcMethod:      "QueueRecoveryTransfer",

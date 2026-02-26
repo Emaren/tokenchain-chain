@@ -24,6 +24,10 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 	)
 
 	registrar.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgRecordMerchantAllocation{},
+	)
+
+	registrar.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgFundRewardPool{},
 	)
 

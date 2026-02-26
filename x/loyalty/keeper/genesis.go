@@ -29,6 +29,11 @@ func (k Keeper) InitGenesis(ctx context.Context, genState types.GenesisState) er
 			return err
 		}
 	}
+	for _, elem := range genState.MerchantallocationMap {
+		if err := k.Merchantallocation.Set(ctx, elem.Key, elem); err != nil {
+			return err
+		}
+	}
 	for _, elem := range genState.RecoveryoperationList {
 		if err := k.Recoveryoperation.Set(ctx, elem.Id, elem); err != nil {
 			return err
@@ -70,6 +75,12 @@ func (k Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error) 
 	}
 	if err := k.Rewardaccrual.Walk(ctx, nil, func(_ string, val types.Rewardaccrual) (stop bool, err error) {
 		genesis.RewardaccrualMap = append(genesis.RewardaccrualMap, val)
+		return false, nil
+	}); err != nil {
+		return nil, err
+	}
+	if err := k.Merchantallocation.Walk(ctx, nil, func(_ string, val types.Merchantallocation) (stop bool, err error) {
+		genesis.MerchantallocationMap = append(genesis.MerchantallocationMap, val)
 		return false, nil
 	}); err != nil {
 		return nil, err

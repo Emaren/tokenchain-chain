@@ -1,0 +1,18 @@
+syntax = "proto3";
+package tokenchain.loyalty.v1;
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Merchantallocation records a daily Bucket C allocation for a merchant token.
+message Merchantallocation {
+  string key = 1;
+  string date = 2;
+  string denom = 3;
+  uint64 activity_score = 4;
+  uint64 bucket_c_amount = 5;
+  uint64 stakers_amount = 6;
+  uint64 treasury_amount = 7;
+  uint64 merchant_incentive_stakers_bps = 8;
+  uint64 merchant_incentive_treasury_bps = 9;
+  string creator = 10;
+}

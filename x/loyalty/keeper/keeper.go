@@ -31,6 +31,7 @@ type Keeper struct {
 	Creatorallowlist     collections.Map[string, types.Creatorallowlist]
 	Verifiedtoken        collections.Map[string, types.Verifiedtoken]
 	Rewardaccrual        collections.Map[string, types.Rewardaccrual]
+	Merchantallocation   collections.Map[string, types.Merchantallocation]
 	RecoveryoperationSeq collections.Sequence
 	Recoveryoperation    collections.Map[uint64, types.Recoveryoperation]
 }
@@ -72,6 +73,7 @@ func NewKeeper(
 		Creatorallowlist:     collections.NewMap(sb, types.CreatorallowlistKey, "creatorallowlist", collections.StringKey, codec.CollValue[types.Creatorallowlist](cdc)),
 		Verifiedtoken:        collections.NewMap(sb, types.VerifiedtokenKey, "verifiedtoken", collections.StringKey, codec.CollValue[types.Verifiedtoken](cdc)),
 		Rewardaccrual:        collections.NewMap(sb, types.RewardaccrualKey, "rewardaccrual", collections.StringKey, codec.CollValue[types.Rewardaccrual](cdc)),
+		Merchantallocation:   collections.NewMap(sb, types.MerchantallocationKey, "merchantallocation", collections.StringKey, codec.CollValue[types.Merchantallocation](cdc)),
 		Recoveryoperation:    collections.NewMap(sb, types.RecoveryoperationKey, "recoveryoperation", collections.Uint64Key, codec.CollValue[types.Recoveryoperation](cdc)),
 		RecoveryoperationSeq: collections.NewSequence(sb, types.RecoveryoperationCountKey, "recoveryoperationSequence"),
 	}
