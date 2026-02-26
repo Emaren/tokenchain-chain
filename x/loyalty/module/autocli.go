@@ -42,6 +42,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
 				},
 				{
+					RpcMethod:      "GetVerifiedtokenByDenom",
+					Use:            "get-verifiedtoken-by-denom [denom]",
+					Short:          "Gets a verifiedtoken by denom query parameter",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
+				},
+				{
 					RpcMethod: "ListRewardaccrual",
 					Use:       "list-rewardaccrual",
 					Short:     "List all rewardaccrual",

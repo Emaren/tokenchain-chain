@@ -129,3 +129,34 @@ func TestVerifiedtokenQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
+
+func TestVerifiedtokenQueryByDenomParam(t *testing.T) {
+	f := initFixture(t)
+	qs := keeper.NewQueryServerImpl(f.keeper)
+	msgs := createNVerifiedtoken(f.keeper, f.ctx, 2)
+
+	t.Run("found", func(t *testing.T) {
+		resp, err := qs.GetVerifiedtokenByDenom(f.ctx, &types.QueryGetVerifiedtokenByDenomRequest{
+			Denom: msgs[0].Denom,
+		})
+		require.NoError(t, err)
+		require.EqualExportedValues(t, &types.QueryGetVerifiedtokenResponse{Verifiedtoken: msgs[0]}, resp)
+	})
+
+	t.Run("missing", func(t *testing.T) {
+		_, err := qs.GetVerifiedtokenByDenom(f.ctx, &types.QueryGetVerifiedtokenByDenomRequest{
+			Denom: "does-not-exist",
+		})
+		require.ErrorIs(t, err, status.Error(codes.NotFound, "not found"))
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		_, err := qs.GetVerifiedtokenByDenom(f.ctx, &types.QueryGetVerifiedtokenByDenomRequest{})
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "denom is required"))
+	})
+
+	t.Run("invalid_request", func(t *testing.T) {
+		_, err := qs.GetVerifiedtokenByDenom(f.ctx, nil)
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
+	})
+}

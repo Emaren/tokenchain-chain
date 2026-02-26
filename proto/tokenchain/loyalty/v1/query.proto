@@ -36,6 +36,11 @@ service Query {
     option (google.api.http).get = "/tokenchain/loyalty/v1/verifiedtoken/{denom}";
   }
 
+  // GetVerifiedtokenByDenom fetches a verified token using denom as a query parameter.
+  rpc GetVerifiedtokenByDenom(QueryGetVerifiedtokenByDenomRequest) returns (QueryGetVerifiedtokenResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/verifiedtoken_by_denom";
+  }
+
   // ListVerifiedtoken defines the ListVerifiedtoken RPC.
   rpc ListVerifiedtoken(QueryAllVerifiedtokenRequest) returns (QueryAllVerifiedtokenResponse) {
     option (google.api.http).get = "/tokenchain/loyalty/v1/verifiedtoken";
@@ -117,6 +122,11 @@ message QueryAllCreatorallowlistResponse {
 
 // QueryGetVerifiedtokenRequest defines the QueryGetVerifiedtokenRequest message.
 message QueryGetVerifiedtokenRequest {
+  string denom = 1;
+}
+
+// QueryGetVerifiedtokenByDenomRequest defines the QueryGetVerifiedtokenByDenomRequest message.
+message QueryGetVerifiedtokenByDenomRequest {
   string denom = 1;
 }
 
