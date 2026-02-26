@@ -51,6 +51,11 @@ service Query {
     option (google.api.http).get = "/tokenchain/loyalty/v1/rewardaccrual";
   }
 
+  // FilterRewardaccrual returns reward accrual records filtered by address/denom fields.
+  rpc FilterRewardaccrual(QueryFilterRewardaccrualRequest) returns (QueryFilterRewardaccrualResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/rewardaccruals/filter";
+  }
+
   // ListRecoveryoperation Queries a list of Recoveryoperation items.
   rpc GetRecoveryoperation(QueryGetRecoveryoperationRequest) returns (QueryGetRecoveryoperationResponse) {
     option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperation/{id}";
@@ -143,6 +148,19 @@ message QueryAllRewardaccrualRequest {
 
 // QueryAllRewardaccrualResponse defines the QueryAllRewardaccrualResponse message.
 message QueryAllRewardaccrualResponse {
+  repeated Rewardaccrual rewardaccrual = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryFilterRewardaccrualRequest defines the QueryFilterRewardaccrualRequest message.
+message QueryFilterRewardaccrualRequest {
+  string address = 1;
+  string denom = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryFilterRewardaccrualResponse defines the QueryFilterRewardaccrualResponse message.
+message QueryFilterRewardaccrualResponse {
   repeated Rewardaccrual rewardaccrual = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

@@ -22,6 +22,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - accrual and claim ledger
   - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker
   - daily rollup status query endpoint (`/tokenchain/loyalty/v1/daily_rollup/status`)
+  - filtered reward accrual query endpoint (`/tokenchain/loyalty/v1/rewardaccruals/filter`)
   - filtered recovery operations query endpoint (`/tokenchain/loyalty/v1/recoveryoperations/filter`)
   - richer tx responses for create/mint/recovery operations (denom, minted supply, operation IDs/status/timestamps)
 - Inflation suppression hook added in app init flow.
@@ -45,7 +46,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
 
 ## Resume Plan
 1. Design and wire TokenFactory module path that preserves locked Day-1 policy rules.
-2. Add query/indexer surfaces for daily rollup status + decoded tx response helpers.
+2. Add query/indexer surfaces for decoded tx response helpers.
 3. Run `go build ./...` and `go test ./...`.
 4. Commit clean milestone and push.
 

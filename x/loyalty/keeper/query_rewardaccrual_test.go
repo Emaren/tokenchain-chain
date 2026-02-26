@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"tokenchain/testutil/sample"
 	"tokenchain/x/loyalty/keeper"
 	"tokenchain/x/loyalty/types"
 )
@@ -119,6 +120,138 @@ func TestRewardaccrualQueryPaginated(t *testing.T) {
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := qs.ListRewardaccrual(f.ctx, nil)
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
+	})
+}
+
+func TestRewardaccrualQueryFiltered(t *testing.T) {
+	f := initFixture(t)
+	qs := keeper.NewQueryServerImpl(f.keeper)
+
+	addrA := sample.AccAddress()
+	addrB := sample.AccAddress()
+	denomA := "utoken"
+	denomB := "factory/" + addrA + "/wheat"
+	denomC := "factory/" + addrB + "/stone"
+
+	records := []types.Rewardaccrual{
+		{
+			Key:            addrA + "|" + denomA,
+			Address:        addrA,
+			Denom:          denomA,
+			Amount:         11,
+			LastRollupDate: "2026-02-25",
+		},
+		{
+			Key:            addrA + "|" + denomB,
+			Address:        addrA,
+			Denom:          denomB,
+			Amount:         22,
+			LastRollupDate: "2026-02-25",
+		},
+		{
+			Key:            addrB + "|" + denomA,
+			Address:        addrB,
+			Denom:          denomA,
+			Amount:         33,
+			LastRollupDate: "2026-02-25",
+		},
+		{
+			Key:            addrB + "|" + denomC,
+			Address:        addrB,
+			Denom:          denomC,
+			Amount:         44,
+			LastRollupDate: "2026-02-25",
+		},
+	}
+
+	for _, record := range records {
+		require.NoError(t, f.keeper.Rewardaccrual.Set(f.ctx, record.Key, record))
+	}
+
+	t.Run("by_address", func(t *testing.T) {
+		resp, err := qs.FilterRewardaccrual(f.ctx, &types.QueryFilterRewardaccrualRequest{
+			Address: addrA,
+		})
+		require.NoError(t, err)
+		require.Len(t, resp.Rewardaccrual, 2)
+		for _, record := range resp.Rewardaccrual {
+			require.Equal(t, addrA, record.Address)
+		}
+	})
+
+	t.Run("by_denom", func(t *testing.T) {
+		resp, err := qs.FilterRewardaccrual(f.ctx, &types.QueryFilterRewardaccrualRequest{
+			Denom: denomA,
+		})
+		require.NoError(t, err)
+		require.Len(t, resp.Rewardaccrual, 2)
+		for _, record := range resp.Rewardaccrual {
+			require.Equal(t, denomA, record.Denom)
+		}
+	})
+
+	t.Run("by_address_and_denom", func(t *testing.T) {
+		resp, err := qs.FilterRewardaccrual(f.ctx, &types.QueryFilterRewardaccrualRequest{
+			Address: addrB,
+			Denom:   denomC,
+		})
+		require.NoError(t, err)
+		require.Len(t, resp.Rewardaccrual, 1)
+		require.Equal(t, records[3], resp.Rewardaccrual[0])
+	})
+
+	t.Run("pagination", func(t *testing.T) {
+		req := &types.QueryFilterRewardaccrualRequest{
+			Address: addrB,
+			Pagination: &query.PageRequest{
+				Limit: 1,
+			},
+		}
+
+		page1, err := qs.FilterRewardaccrual(f.ctx, req)
+		require.NoError(t, err)
+		require.Len(t, page1.Rewardaccrual, 1)
+		require.NotEmpty(t, page1.Pagination.NextKey)
+
+		page2, err := qs.FilterRewardaccrual(f.ctx, &types.QueryFilterRewardaccrualRequest{
+			Address: addrB,
+			Pagination: &query.PageRequest{
+				Key:   page1.Pagination.NextKey,
+				Limit: 1,
+			},
+		})
+		require.NoError(t, err)
+		require.Len(t, page2.Rewardaccrual, 1)
+		require.Empty(t, page2.Pagination.NextKey)
+	})
+
+	t.Run("invalid_address", func(t *testing.T) {
+		_, err := qs.FilterRewardaccrual(f.ctx, &types.QueryFilterRewardaccrualRequest{
+			Address: "not-an-address",
+		})
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid address filter"))
+	})
+
+	t.Run("invalid_denom", func(t *testing.T) {
+		_, err := qs.FilterRewardaccrual(f.ctx, &types.QueryFilterRewardaccrualRequest{
+			Denom: "BAD DENOM",
+		})
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid denom filter"))
+	})
+
+	t.Run("invalid_pagination_key", func(t *testing.T) {
+		_, err := qs.FilterRewardaccrual(f.ctx, &types.QueryFilterRewardaccrualRequest{
+			Address: addrA,
+			Pagination: &query.PageRequest{
+				Key: []byte("oops"),
+			},
+		})
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid pagination key"))
+	})
+
+	t.Run("nil_request", func(t *testing.T) {
+		_, err := qs.FilterRewardaccrual(f.ctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }

@@ -53,6 +53,7 @@
   - users claim accrued balances on-chain
   - begin-block daily rollup boundary fires once per Edmonton local day and emits `loyalty_daily_rollup`
   - query endpoint exposes rollup status for dashboards: `/tokenchain/loyalty/v1/daily_rollup/status`
+  - query endpoint exposes filtered reward accruals by address/denom: `/tokenchain/loyalty/v1/rewardaccruals/filter`
   - query endpoint exposes filtered recovery operations: `/tokenchain/loyalty/v1/recoveryoperations/filter`
 - Daily rollup timezone parameter default: `America/Edmonton`
 - Fee split parameter defaults: `7000/2000/1000` bps
