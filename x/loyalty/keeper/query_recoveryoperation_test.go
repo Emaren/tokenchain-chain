@@ -126,3 +126,125 @@ func TestRecoveryoperationQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
+
+func TestRecoveryoperationQueryFiltered(t *testing.T) {
+	f := initFixture(t)
+	qs := keeper.NewQueryServerImpl(f.keeper)
+
+	ops := []types.Recoveryoperation{
+		{
+			Id:           0,
+			Denom:        "factory/a/alpha",
+			FromAddress:  "addr1",
+			ToAddress:    "addr2",
+			Amount:       1,
+			RequestedBy:  "policyA",
+			ExecuteAfter: 1,
+			CreatedAt:    1,
+			Status:       types.RecoveryStatusQueued,
+		},
+		{
+			Id:           1,
+			Denom:        "factory/a/alpha",
+			FromAddress:  "addr1",
+			ToAddress:    "addr3",
+			Amount:       2,
+			RequestedBy:  "policyA",
+			ExecuteAfter: 2,
+			CreatedAt:    2,
+			Status:       types.RecoveryStatusCancelled,
+		},
+		{
+			Id:           2,
+			Denom:        "factory/b/beta",
+			FromAddress:  "addr4",
+			ToAddress:    "addr5",
+			Amount:       3,
+			RequestedBy:  "policyB",
+			ExecuteAfter: 3,
+			CreatedAt:    3,
+			Status:       types.RecoveryStatusQueued,
+		},
+		{
+			Id:           3,
+			Denom:        "factory/c/gamma",
+			FromAddress:  "addr6",
+			ToAddress:    "addr7",
+			Amount:       4,
+			RequestedBy:  "policyC",
+			ExecuteAfter: 4,
+			CreatedAt:    4,
+			Status:       types.RecoveryStatusExecuted,
+		},
+	}
+	for _, op := range ops {
+		require.NoError(t, f.keeper.Recoveryoperation.Set(f.ctx, op.Id, op))
+	}
+	require.NoError(t, f.keeper.RecoveryoperationSeq.Set(f.ctx, uint64(len(ops))))
+
+	t.Run("by_status", func(t *testing.T) {
+		resp, err := qs.FilterRecoveryoperation(f.ctx, &types.QueryFilterRecoveryoperationRequest{
+			Status: types.RecoveryStatusQueued,
+		})
+		require.NoError(t, err)
+		require.Len(t, resp.Recoveryoperation, 2)
+		for _, op := range resp.Recoveryoperation {
+			require.Equal(t, types.RecoveryStatusQueued, op.Status)
+		}
+		require.EqualValues(t, 2, resp.Pagination.Total)
+	})
+
+	t.Run("by_compound_filters", func(t *testing.T) {
+		resp, err := qs.FilterRecoveryoperation(f.ctx, &types.QueryFilterRecoveryoperationRequest{
+			Denom:       "factory/a/alpha",
+			RequestedBy: "policyA",
+			FromAddress: "addr1",
+		})
+		require.NoError(t, err)
+		require.Len(t, resp.Recoveryoperation, 2)
+	})
+
+	t.Run("pagination_by_key", func(t *testing.T) {
+		req := &types.QueryFilterRecoveryoperationRequest{
+			Status: types.RecoveryStatusQueued,
+			Pagination: &query.PageRequest{
+				Limit:      1,
+				CountTotal: true,
+			},
+		}
+		page1, err := qs.FilterRecoveryoperation(f.ctx, req)
+		require.NoError(t, err)
+		require.Len(t, page1.Recoveryoperation, 1)
+		require.NotEmpty(t, page1.Pagination.NextKey)
+		require.EqualValues(t, 2, page1.Pagination.Total)
+
+		page2, err := qs.FilterRecoveryoperation(f.ctx, &types.QueryFilterRecoveryoperationRequest{
+			Status: types.RecoveryStatusQueued,
+			Pagination: &query.PageRequest{
+				Key:        page1.Pagination.NextKey,
+				Limit:      1,
+				CountTotal: true,
+			},
+		})
+		require.NoError(t, err)
+		require.Len(t, page2.Recoveryoperation, 1)
+		require.EqualValues(t, 2, page2.Pagination.Total)
+	})
+
+	t.Run("invalid_status", func(t *testing.T) {
+		_, err := qs.FilterRecoveryoperation(f.ctx, &types.QueryFilterRecoveryoperationRequest{Status: "not-a-status"})
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid status filter"))
+	})
+
+	t.Run("invalid_key", func(t *testing.T) {
+		_, err := qs.FilterRecoveryoperation(f.ctx, &types.QueryFilterRecoveryoperationRequest{
+			Pagination: &query.PageRequest{Key: []byte("bad-key")},
+		})
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid pagination key"))
+	})
+
+	t.Run("nil_request", func(t *testing.T) {
+		_, err := qs.FilterRecoveryoperation(f.ctx, nil)
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
+	})
+}

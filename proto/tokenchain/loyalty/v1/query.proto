@@ -61,6 +61,11 @@ service Query {
     option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperation";
   }
 
+  // FilterRecoveryoperation returns recovery operations filtered by status/token/address fields.
+  rpc FilterRecoveryoperation(QueryFilterRecoveryoperationRequest) returns (QueryFilterRecoveryoperationResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperation/filter";
+  }
+
   // DailyRollupStatus returns rollup boundary status for the configured timezone.
   rpc DailyRollupStatus(QueryDailyRollupStatusRequest) returns (QueryDailyRollupStatusResponse) {
     option (google.api.http).get = "/tokenchain/loyalty/v1/daily_rollup/status";
@@ -159,6 +164,22 @@ message QueryAllRecoveryoperationRequest {
 
 // QueryAllRecoveryoperationResponse defines the QueryAllRecoveryoperationResponse message.
 message QueryAllRecoveryoperationResponse {
+  repeated Recoveryoperation recoveryoperation = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryFilterRecoveryoperationRequest defines the QueryFilterRecoveryoperationRequest message.
+message QueryFilterRecoveryoperationRequest {
+  string status = 1;
+  string denom = 2;
+  string requested_by = 3;
+  string from_address = 4;
+  string to_address = 5;
+  cosmos.base.query.v1beta1.PageRequest pagination = 6;
+}
+
+// QueryFilterRecoveryoperationResponse defines the QueryFilterRecoveryoperationResponse message.
+message QueryFilterRecoveryoperationResponse {
   repeated Recoveryoperation recoveryoperation = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
