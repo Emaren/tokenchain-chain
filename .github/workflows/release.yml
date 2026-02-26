@@ -17,6 +17,8 @@ on: push
 jobs:
   might_release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,14 +29,32 @@ jobs:
         id: vars
         uses: ignite/cli/actions/release/vars@main
 
-      - name: Issue Release Assets
-        uses: ignite/cli/actions/cli@main
+      - name: Setup Go
         if: ${{ steps.vars.outputs.should_release == 'true' }}
+        uses: actions/setup-go@v5
         with:
-          args: chain build --release --release.prefix ${{ steps.vars.outputs.tarball_prefix }} -t linux:amd64 -t darwin:amd64 -t darwin:arm64 -y
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build Linux Release Asset
+        if: ${{ steps.vars.outputs.should_release == 'true' }}
         env:
-          DO_NOT_TRACK: 1
           GOFLAGS: "-buildvcs=false"
+        run: |
+          set -euo pipefail
+          mkdir -p dist release
+          go mod download
+          go build -trimpath -o dist/tokenchaind-linux-amd64 ./cmd/tokenchaind
+
+          WASMVM_LIB="$(find "$(go env GOPATH)/pkg/mod" -type f -name 'libwasmvm.x86_64.so' | head -n1 || true)"
+          if [[ -z "${WASMVM_LIB}" ]]; then
+            echo "libwasmvm.x86_64.so not found in module cache" >&2
+            exit 1
+          fi
+          cp "${WASMVM_LIB}" dist/libwasmvm.x86_64.so
+
+          tar -C dist -czf "release/${{ steps.vars.outputs.tarball_prefix }}-linux-amd64.tar.gz" \
+            tokenchaind-linux-amd64 libwasmvm.x86_64.so
 
       - name: Delete the "latest" Release
         uses: dev-drprasad/delete-tag-and-release@v0.2.1
