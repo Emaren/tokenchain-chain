@@ -2,8 +2,11 @@ package keeper
 
 import (
 	"context"
+	"errors"
 
 	"tokenchain/x/loyalty/types"
+
+	"cosmossdk.io/collections"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.
@@ -31,6 +34,11 @@ func (k Keeper) InitGenesis(ctx context.Context, genState types.GenesisState) er
 
 	if err := k.RecoveryoperationSeq.Set(ctx, genState.RecoveryoperationCount); err != nil {
 		return err
+	}
+	if genState.LastDailyRollupDate != "" {
+		if err := k.LastDailyRollupDate.Set(ctx, genState.LastDailyRollupDate); err != nil {
+			return err
+		}
 	}
 
 	return k.Params.Set(ctx, genState.Params)
@@ -73,6 +81,12 @@ func (k Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error) 
 
 	genesis.RecoveryoperationCount, err = k.RecoveryoperationSeq.Peek(ctx)
 	if err != nil {
+		return nil, err
+	}
+	lastDailyRollupDate, err := k.LastDailyRollupDate.Get(ctx)
+	if err == nil {
+		genesis.LastDailyRollupDate = lastDailyRollupDate
+	} else if !errors.Is(err, collections.ErrNotFound) {
 		return nil, err
 	}
 

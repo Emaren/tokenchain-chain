@@ -21,6 +21,8 @@ type Keeper struct {
 
 	Schema collections.Schema
 	Params collections.Item[types.Params]
+	// Tracks the last calendar date (in configured rollup timezone) when begin-block rollup fired.
+	LastDailyRollupDate collections.Item[string]
 
 	bankKeeper           types.BankKeeper
 	authKeeper           types.AuthKeeper
@@ -54,11 +56,20 @@ func NewKeeper(
 		addressCodec: addressCodec,
 		authority:    authority,
 
-		bankKeeper:       bankKeeper,
-		authKeeper:       authKeeper,
-		stakingKeeper:    stakingKeeper,
-		Params:           collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Creatorallowlist: collections.NewMap(sb, types.CreatorallowlistKey, "creatorallowlist", collections.StringKey, codec.CollValue[types.Creatorallowlist](cdc)), Verifiedtoken: collections.NewMap(sb, types.VerifiedtokenKey, "verifiedtoken", collections.StringKey, codec.CollValue[types.Verifiedtoken](cdc)), Rewardaccrual: collections.NewMap(sb, types.RewardaccrualKey, "rewardaccrual", collections.StringKey, codec.CollValue[types.Rewardaccrual](cdc)), Recoveryoperation: collections.NewMap(sb, types.RecoveryoperationKey, "recoveryoperation", collections.Uint64Key, codec.CollValue[types.Recoveryoperation](cdc)),
+		bankKeeper:    bankKeeper,
+		authKeeper:    authKeeper,
+		stakingKeeper: stakingKeeper,
+		Params:        collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
+		LastDailyRollupDate: collections.NewItem(
+			sb,
+			types.LastDailyRollupDateKey,
+			"last_daily_rollup_date",
+			collections.StringValue,
+		),
+		Creatorallowlist:     collections.NewMap(sb, types.CreatorallowlistKey, "creatorallowlist", collections.StringKey, codec.CollValue[types.Creatorallowlist](cdc)),
+		Verifiedtoken:        collections.NewMap(sb, types.VerifiedtokenKey, "verifiedtoken", collections.StringKey, codec.CollValue[types.Verifiedtoken](cdc)),
+		Rewardaccrual:        collections.NewMap(sb, types.RewardaccrualKey, "rewardaccrual", collections.StringKey, codec.CollValue[types.Rewardaccrual](cdc)),
+		Recoveryoperation:    collections.NewMap(sb, types.RecoveryoperationKey, "recoveryoperation", collections.Uint64Key, codec.CollValue[types.Recoveryoperation](cdc)),
 		RecoveryoperationSeq: collections.NewSequence(sb, types.RecoveryoperationCountKey, "recoveryoperationSequence"),
 	}
 	schema, err := sb.Build()

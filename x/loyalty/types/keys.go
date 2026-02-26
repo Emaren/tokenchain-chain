@@ -21,4 +21,5 @@ var ParamsKey = collections.NewPrefix("p_loyalty")
 var (
 	RecoveryoperationKey      = collections.NewPrefix("recoveryoperation/value/")
 	RecoveryoperationCountKey = collections.NewPrefix("recoveryoperation/count/")
+	LastDailyRollupDateKey    = collections.NewPrefix("daily_rollup/date/")
 )

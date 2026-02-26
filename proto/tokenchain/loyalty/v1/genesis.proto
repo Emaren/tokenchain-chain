@@ -24,4 +24,5 @@ message GenesisState {
   repeated Rewardaccrual rewardaccrual_map = 4 [(gogoproto.nullable) = false];
   repeated Recoveryoperation recoveryoperation_list = 5 [(gogoproto.nullable) = false];
   uint64 recoveryoperation_count = 6;
+  string last_daily_rollup_date = 7;
 }

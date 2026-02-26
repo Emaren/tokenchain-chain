@@ -1,6 +1,9 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
@@ -49,6 +52,11 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("recoveryoperation id should be lower or equal than the last id")
 		}
 		recoveryoperationIdMap[elem.Id] = true
+	}
+	if gs.LastDailyRollupDate != "" {
+		if _, err := time.Parse("2006-01-02", gs.LastDailyRollupDate); err != nil {
+			return fmt.Errorf("invalid last daily rollup date: %w", err)
+		}
 	}
 
 	return gs.Params.Validate()

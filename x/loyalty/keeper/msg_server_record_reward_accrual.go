@@ -37,11 +37,13 @@ func (k msgServer) RecordRewardAccrual(ctx context.Context, msg *types.MsgRecord
 
 	rollupDate := msg.Date
 	if rollupDate == "" {
-		location, err := time.LoadLocation(params.DailyRollupTimezone)
+		location, err := loadRollupLocation(params.DailyRollupTimezone)
 		if err != nil {
-			return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			return nil, err
 		}
-		rollupDate = sdk.UnwrapSDKContext(ctx).BlockTime().In(location).Format("2006-01-02")
+		rollupDate = sdk.UnwrapSDKContext(ctx).BlockTime().In(location).Format(rollupDateLayout)
+	} else if _, err := time.Parse(rollupDateLayout, rollupDate); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "date must be YYYY-MM-DD")
 	}
 
 	key := rewardAccrualKey(msg.Address, msg.Denom)

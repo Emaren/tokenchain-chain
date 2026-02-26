@@ -44,12 +44,12 @@
 - Reward accrual ledger and claim path:
   - authority can record accruals
   - users claim accrued balances on-chain
+  - begin-block daily rollup boundary fires once per Edmonton local day and emits `loyalty_daily_rollup`
 - Daily rollup timezone parameter default: `America/Edmonton`
 - Fee split parameter defaults: `7000/2000/1000` bps
 
 ## Explicitly Deferred
 - Full TokenFactory module parity
-- Automated end-block daily reward rollup scheduler
 - Osmosis relayer automation and production ops manifests
 
 These deferred items are intentionally separated from the current pass so the baseline chain compiles, tests pass, and the policy layer is enforceable now.

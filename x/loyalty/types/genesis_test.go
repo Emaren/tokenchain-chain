@@ -27,6 +27,7 @@ func TestGenesisState_Validate(t *testing.T) {
 				VerifiedtokenMap:      []types.Verifiedtoken{{Denom: "token0"}, {Denom: "token1"}},
 				RewardaccrualMap:      []types.Rewardaccrual{{Key: "0"}, {Key: "1"}},
 				RecoveryoperationList: []types.Recoveryoperation{{Id: 0}, {Id: 1}}, RecoveryoperationCount: 2,
+				LastDailyRollupDate: "2026-02-26",
 			}, valid: true,
 		}, {
 			desc: "duplicated creatorallowlist",
@@ -81,6 +82,13 @@ func TestGenesisState_Validate(t *testing.T) {
 						Id: 0,
 					},
 				},
+			},
+			valid: false,
+		}, {
+			desc: "invalid last daily rollup date format",
+			genState: &types.GenesisState{
+				Params:              types.DefaultParams(),
+				LastDailyRollupDate: "26-02-2026",
 			},
 			valid: false,
 		}, {

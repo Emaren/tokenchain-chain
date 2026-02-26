@@ -13,6 +13,7 @@ func TestGenesis(t *testing.T) {
 		Params:              types.DefaultParams(),
 		CreatorallowlistMap: []types.Creatorallowlist{{Address: "0"}, {Address: "1"}}, VerifiedtokenMap: []types.Verifiedtoken{{Denom: "0"}, {Denom: "1"}}, RewardaccrualMap: []types.Rewardaccrual{{Key: "0"}, {Key: "1"}}, RecoveryoperationList: []types.Recoveryoperation{{Id: 0}, {Id: 1}},
 		RecoveryoperationCount: 2,
+		LastDailyRollupDate:    "2026-02-26",
 	}
 	f := initFixture(t)
 	err := f.keeper.InitGenesis(f.ctx, genesisState)

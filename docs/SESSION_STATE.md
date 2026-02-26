@@ -14,8 +14,10 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - creator allowlist (authority-gated)
   - verified token registry
   - no-seizure default policy handling
-  - mint path with hard cap enforcement
+  - strict full-denom minting (`factory/{issuer}/{subdenom}`) with on-chain hard cap enforcement
   - accrual and claim ledger
+  - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker
+  - richer tx responses for create/mint/recovery operations (denom, minted supply, operation IDs/status/timestamps)
 - Inflation suppression hook added in app init flow.
 - CosmWasm runtime integration completed:
   - wasm keeper + module registration in app runtime (`app/wasm.go`)
@@ -32,12 +34,12 @@ Workspace: /Users/tonyblum/projects/TokenChain
 
 ## In Progress
 - TokenFactory parity work:
-  - completed tokenfactory-style denom canonicalization (`factory/{issuer}/{subdenom}`)
+  - completed tokenfactory-style denom canonicalization + strict full-denom enforcement
   - remaining: native tokenfactory module parity and admin flow integration.
 
 ## Resume Plan
 1. Design and wire TokenFactory module path that preserves locked Day-1 policy rules.
-2. Map group+timelock execution flow onto token admin recovery operations.
+2. Add query/indexer surfaces for daily rollup status + decoded tx response helpers.
 3. Run `go build ./...` and `go test ./...`.
 4. Commit clean milestone and push.
 
