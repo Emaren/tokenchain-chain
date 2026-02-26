@@ -222,6 +222,51 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		weightMsgRecordRewardAccrual,
 		loyaltysimulation.SimulateMsgRecordRewardAccrual(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
 	))
+	const (
+		opWeightMsgQueueRecoveryTransfer          = "op_weight_msg_loyalty"
+		defaultWeightMsgQueueRecoveryTransfer int = 100
+	)
+
+	var weightMsgQueueRecoveryTransfer int
+	simState.AppParams.GetOrGenerate(opWeightMsgQueueRecoveryTransfer, &weightMsgQueueRecoveryTransfer, nil,
+		func(_ *rand.Rand) {
+			weightMsgQueueRecoveryTransfer = defaultWeightMsgQueueRecoveryTransfer
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgQueueRecoveryTransfer,
+		loyaltysimulation.SimulateMsgQueueRecoveryTransfer(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
+	))
+	const (
+		opWeightMsgExecuteRecoveryTransfer          = "op_weight_msg_loyalty"
+		defaultWeightMsgExecuteRecoveryTransfer int = 100
+	)
+
+	var weightMsgExecuteRecoveryTransfer int
+	simState.AppParams.GetOrGenerate(opWeightMsgExecuteRecoveryTransfer, &weightMsgExecuteRecoveryTransfer, nil,
+		func(_ *rand.Rand) {
+			weightMsgExecuteRecoveryTransfer = defaultWeightMsgExecuteRecoveryTransfer
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgExecuteRecoveryTransfer,
+		loyaltysimulation.SimulateMsgExecuteRecoveryTransfer(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
+	))
+	const (
+		opWeightMsgCancelRecoveryTransfer          = "op_weight_msg_loyalty"
+		defaultWeightMsgCancelRecoveryTransfer int = 100
+	)
+
+	var weightMsgCancelRecoveryTransfer int
+	simState.AppParams.GetOrGenerate(opWeightMsgCancelRecoveryTransfer, &weightMsgCancelRecoveryTransfer, nil,
+		func(_ *rand.Rand) {
+			weightMsgCancelRecoveryTransfer = defaultWeightMsgCancelRecoveryTransfer
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCancelRecoveryTransfer,
+		loyaltysimulation.SimulateMsgCancelRecoveryTransfer(am.authKeeper, am.bankKeeper, am.keeper, simState.TxConfig),
+	))
 
 	return operations
 }

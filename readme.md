@@ -21,6 +21,10 @@ This repository now includes a working chain baseline with:
 - tokenfactory-style business denom canonicalization (`factory/{issuer}/{subdenom}`)
 - no-seizure default (`seizure_opt_in_default=false`)
 - optional recovery policy metadata (`recovery_group_policy`, timelock hours)
+- on-chain recovery operation queue with timelock execution:
+  - `queue-recovery-transfer`
+  - `execute-recovery-transfer`
+  - `cancel-recovery-transfer`
 - hard-cap mint checks (`mint-verified-token` cannot exceed `max_supply`)
 - on-chain accrual ledger (`rewardaccrual`) and user claim flow (`claim-reward`)
 - daily rollup timezone param default: `America/Edmonton`

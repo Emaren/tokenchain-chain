@@ -1,0 +1,20 @@
+syntax = "proto3";
+package tokenchain.loyalty.v1;
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Recoveryoperation defines the Recoveryoperation message.
+message Recoveryoperation {
+  uint64 id = 1;
+  string denom = 2;
+  string from_address = 3;
+  string to_address = 4;
+  uint64 amount = 5;
+  string requested_by = 6;
+  uint64 execute_after = 7;
+  uint64 created_at = 8;
+  string status = 9;
+  uint64 executed_at = 10;
+  uint64 cancelled_at = 11;
+  string cancel_reason = 12;
+}

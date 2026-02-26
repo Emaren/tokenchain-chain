@@ -35,6 +35,11 @@
   - recovery policy metadata
   - tokenfactory-style denom format: `factory/{issuer}/{subdenom}`
 - No-seizure default: `seizure_opt_in_default=false`
+- Opt-in recovery execution flow:
+  - `queue-recovery-transfer` (policy/authority only)
+  - timelock enforced on-chain
+  - `execute-recovery-transfer` (after timelock)
+  - `cancel-recovery-transfer` (policy/authority only)
 - Hard cap enforcement in mint path (`mint-verified-token`)
 - Reward accrual ledger and claim path:
   - authority can record accruals

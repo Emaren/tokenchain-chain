@@ -8,6 +8,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "tokenchain/loyalty/v1/creatorallowlist.proto";
 import "tokenchain/loyalty/v1/params.proto";
+import "tokenchain/loyalty/v1/recoveryoperation.proto";
 import "tokenchain/loyalty/v1/rewardaccrual.proto";
 import "tokenchain/loyalty/v1/verifiedtoken.proto";
 
@@ -48,6 +49,16 @@ service Query {
   // ListRewardaccrual defines the ListRewardaccrual RPC.
   rpc ListRewardaccrual(QueryAllRewardaccrualRequest) returns (QueryAllRewardaccrualResponse) {
     option (google.api.http).get = "/tokenchain/loyalty/v1/rewardaccrual";
+  }
+
+  // ListRecoveryoperation Queries a list of Recoveryoperation items.
+  rpc GetRecoveryoperation(QueryGetRecoveryoperationRequest) returns (QueryGetRecoveryoperationResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperation/{id}";
+  }
+
+  // ListRecoveryoperation defines the ListRecoveryoperation RPC.
+  rpc ListRecoveryoperation(QueryAllRecoveryoperationRequest) returns (QueryAllRecoveryoperationResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperation";
   }
 }
 
@@ -123,5 +134,26 @@ message QueryAllRewardaccrualRequest {
 // QueryAllRewardaccrualResponse defines the QueryAllRewardaccrualResponse message.
 message QueryAllRewardaccrualResponse {
   repeated Rewardaccrual rewardaccrual = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryGetRecoveryoperationRequest defines the QueryGetRecoveryoperationRequest message.
+message QueryGetRecoveryoperationRequest {
+  uint64 id = 1;
+}
+
+// QueryGetRecoveryoperationResponse defines the QueryGetRecoveryoperationResponse message.
+message QueryGetRecoveryoperationResponse {
+  Recoveryoperation recoveryoperation = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAllRecoveryoperationRequest defines the QueryAllRecoveryoperationRequest message.
+message QueryAllRecoveryoperationRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryAllRecoveryoperationResponse defines the QueryAllRecoveryoperationResponse message.
+message QueryAllRecoveryoperationResponse {
+  repeated Recoveryoperation recoveryoperation = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

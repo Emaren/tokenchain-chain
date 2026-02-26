@@ -23,6 +23,15 @@ func (k Keeper) InitGenesis(ctx context.Context, genState types.GenesisState) er
 			return err
 		}
 	}
+	for _, elem := range genState.RecoveryoperationList {
+		if err := k.Recoveryoperation.Set(ctx, elem.Id, elem); err != nil {
+			return err
+		}
+	}
+
+	if err := k.RecoveryoperationSeq.Set(ctx, genState.RecoveryoperationCount); err != nil {
+		return err
+	}
 
 	return k.Params.Set(ctx, genState.Params)
 }
@@ -52,6 +61,18 @@ func (k Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error) 
 		genesis.RewardaccrualMap = append(genesis.RewardaccrualMap, val)
 		return false, nil
 	}); err != nil {
+		return nil, err
+	}
+	err = k.Recoveryoperation.Walk(ctx, nil, func(key uint64, elem types.Recoveryoperation) (bool, error) {
+		genesis.RecoveryoperationList = append(genesis.RecoveryoperationList, elem)
+		return false, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	genesis.RecoveryoperationCount, err = k.RecoveryoperationSeq.Peek(ctx)
+	if err != nil {
 		return nil, err
 	}
 

@@ -22,12 +22,14 @@ type Keeper struct {
 	Schema collections.Schema
 	Params collections.Item[types.Params]
 
-	bankKeeper       types.BankKeeper
-	authKeeper       types.AuthKeeper
-	stakingKeeper    types.StakingKeeper
-	Creatorallowlist collections.Map[string, types.Creatorallowlist]
-	Verifiedtoken    collections.Map[string, types.Verifiedtoken]
-	Rewardaccrual    collections.Map[string, types.Rewardaccrual]
+	bankKeeper           types.BankKeeper
+	authKeeper           types.AuthKeeper
+	stakingKeeper        types.StakingKeeper
+	Creatorallowlist     collections.Map[string, types.Creatorallowlist]
+	Verifiedtoken        collections.Map[string, types.Verifiedtoken]
+	Rewardaccrual        collections.Map[string, types.Rewardaccrual]
+	RecoveryoperationSeq collections.Sequence
+	Recoveryoperation    collections.Map[uint64, types.Recoveryoperation]
 }
 
 func NewKeeper(
@@ -56,8 +58,9 @@ func NewKeeper(
 		authKeeper:       authKeeper,
 		stakingKeeper:    stakingKeeper,
 		Params:           collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Creatorallowlist: collections.NewMap(sb, types.CreatorallowlistKey, "creatorallowlist", collections.StringKey, codec.CollValue[types.Creatorallowlist](cdc)), Verifiedtoken: collections.NewMap(sb, types.VerifiedtokenKey, "verifiedtoken", collections.StringKey, codec.CollValue[types.Verifiedtoken](cdc)), Rewardaccrual: collections.NewMap(sb, types.RewardaccrualKey, "rewardaccrual", collections.StringKey, codec.CollValue[types.Rewardaccrual](cdc))}
-
+		Creatorallowlist: collections.NewMap(sb, types.CreatorallowlistKey, "creatorallowlist", collections.StringKey, codec.CollValue[types.Creatorallowlist](cdc)), Verifiedtoken: collections.NewMap(sb, types.VerifiedtokenKey, "verifiedtoken", collections.StringKey, codec.CollValue[types.Verifiedtoken](cdc)), Rewardaccrual: collections.NewMap(sb, types.RewardaccrualKey, "rewardaccrual", collections.StringKey, codec.CollValue[types.Rewardaccrual](cdc)), Recoveryoperation: collections.NewMap(sb, types.RecoveryoperationKey, "recoveryoperation", collections.Uint64Key, codec.CollValue[types.Recoveryoperation](cdc)),
+		RecoveryoperationSeq: collections.NewSequence(sb, types.RecoveryoperationCountKey, "recoveryoperationSequence"),
+	}
 	schema, err := sb.Build()
 	if err != nil {
 		panic(err)

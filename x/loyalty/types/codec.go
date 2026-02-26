@@ -8,6 +8,18 @@ import (
 
 func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 	registrar.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCancelRecoveryTransfer{},
+	)
+
+	registrar.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgExecuteRecoveryTransfer{},
+	)
+
+	registrar.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgQueueRecoveryTransfer{},
+	)
+
+	registrar.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgRecordRewardAccrual{},
 	)
 

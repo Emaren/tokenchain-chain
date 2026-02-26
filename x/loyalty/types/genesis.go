@@ -6,7 +6,7 @@ import "fmt"
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		Params:              DefaultParams(),
-		CreatorallowlistMap: []Creatorallowlist{}, VerifiedtokenMap: []Verifiedtoken{}, RewardaccrualMap: []Rewardaccrual{}}
+		CreatorallowlistMap: []Creatorallowlist{}, VerifiedtokenMap: []Verifiedtoken{}, RewardaccrualMap: []Rewardaccrual{}, RecoveryoperationList: []Recoveryoperation{}}
 }
 
 // Validate performs basic genesis state validation returning an error upon any
@@ -38,6 +38,17 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for rewardaccrual")
 		}
 		rewardaccrualIndexMap[index] = struct{}{}
+	}
+	recoveryoperationIdMap := make(map[uint64]bool)
+	recoveryoperationCount := gs.GetRecoveryoperationCount()
+	for _, elem := range gs.RecoveryoperationList {
+		if _, ok := recoveryoperationIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for recoveryoperation")
+		}
+		if elem.Id >= recoveryoperationCount {
+			return fmt.Errorf("recoveryoperation id should be lower or equal than the last id")
+		}
+		recoveryoperationIdMap[elem.Id] = true
 	}
 
 	return gs.Params.Validate()

@@ -17,3 +17,8 @@ const (
 
 // ParamsKey is the prefix to retrieve all Params
 var ParamsKey = collections.NewPrefix("p_loyalty")
+
+var (
+	RecoveryoperationKey      = collections.NewPrefix("recoveryoperation/value/")
+	RecoveryoperationCountKey = collections.NewPrefix("recoveryoperation/count/")
+)

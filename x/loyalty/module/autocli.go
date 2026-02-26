@@ -53,6 +53,18 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Alias:          []string{"show-rewardaccrual"},
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "key"}},
 				},
+				{
+					RpcMethod: "ListRecoveryoperation",
+					Use:       "list-recoveryoperation",
+					Short:     "List all recoveryoperation",
+				},
+				{
+					RpcMethod:      "GetRecoveryoperation",
+					Use:            "get-recoveryoperation [id]",
+					Short:          "Gets a recoveryoperation by id",
+					Alias:          []string{"show-recoveryoperation"},
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},
@@ -135,6 +147,24 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "record-reward-accrual [address] [denom] [amount] [date]",
 					Short:          "Send a record-reward-accrual tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "address"}, {ProtoField: "denom"}, {ProtoField: "amount"}, {ProtoField: "date"}},
+				},
+				{
+					RpcMethod:      "QueueRecoveryTransfer",
+					Use:            "queue-recovery-transfer [denom] [from-address] [to-address] [amount]",
+					Short:          "Send a queue-recovery-transfer tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "from_address"}, {ProtoField: "to_address"}, {ProtoField: "amount"}},
+				},
+				{
+					RpcMethod:      "ExecuteRecoveryTransfer",
+					Use:            "execute-recovery-transfer [id]",
+					Short:          "Send a execute-recovery-transfer tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
+				},
+				{
+					RpcMethod:      "CancelRecoveryTransfer",
+					Use:            "cancel-recovery-transfer [id] [reason]",
+					Short:          "Send a cancel-recovery-transfer tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}, {ProtoField: "reason"}},
 				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},

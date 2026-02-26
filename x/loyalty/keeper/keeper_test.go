@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -22,6 +23,57 @@ type fixture struct {
 	ctx          context.Context
 	keeper       keeper.Keeper
 	addressCodec address.Codec
+	bankKeeper   *mockBankKeeper
+}
+
+type mockBankKeeper struct {
+	accountBalances map[string]sdk.Coins
+	moduleBalances  map[string]sdk.Coins
+}
+
+func newMockBankKeeper() *mockBankKeeper {
+	return &mockBankKeeper{
+		accountBalances: make(map[string]sdk.Coins),
+		moduleBalances:  make(map[string]sdk.Coins),
+	}
+}
+
+func cloneCoins(in sdk.Coins) sdk.Coins {
+	if len(in) == 0 {
+		return sdk.NewCoins()
+	}
+	out := make(sdk.Coins, len(in))
+	copy(out, in)
+	return out.Sort()
+}
+
+func (m *mockBankKeeper) SpendableCoins(_ context.Context, addr sdk.AccAddress) sdk.Coins {
+	return cloneCoins(m.accountBalances[addr.String()])
+}
+
+func (m *mockBankKeeper) MintCoins(_ context.Context, moduleName string, amt sdk.Coins) error {
+	m.moduleBalances[moduleName] = m.moduleBalances[moduleName].Add(amt...)
+	return nil
+}
+
+func (m *mockBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, moduleName string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
+	moduleBal := m.moduleBalances[moduleName]
+	if !moduleBal.IsAllGTE(amt) {
+		return sdkerrors.ErrInsufficientFunds
+	}
+	m.moduleBalances[moduleName] = moduleBal.Sub(amt...)
+	m.accountBalances[recipientAddr.String()] = m.accountBalances[recipientAddr.String()].Add(amt...)
+	return nil
+}
+
+func (m *mockBankKeeper) SendCoinsFromAccountToModule(_ context.Context, senderAddr sdk.AccAddress, moduleName string, amt sdk.Coins) error {
+	accountBal := m.accountBalances[senderAddr.String()]
+	if !accountBal.IsAllGTE(amt) {
+		return sdkerrors.ErrInsufficientFunds
+	}
+	m.accountBalances[senderAddr.String()] = accountBal.Sub(amt...)
+	m.moduleBalances[moduleName] = m.moduleBalances[moduleName].Add(amt...)
+	return nil
 }
 
 func initFixture(t *testing.T) *fixture {
@@ -35,13 +87,14 @@ func initFixture(t *testing.T) *fixture {
 	ctx := testutil.DefaultContextWithDB(t, storeKey, storetypes.NewTransientStoreKey("transient_test")).Ctx
 
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
+	bankKeeper := newMockBankKeeper()
 
 	k := keeper.NewKeeper(
 		storeService,
 		encCfg.Codec,
 		addressCodec,
 		authority,
-		nil,
+		bankKeeper,
 		nil,
 		nil,
 	)
@@ -55,5 +108,6 @@ func initFixture(t *testing.T) *fixture {
 		ctx:          ctx,
 		keeper:       k,
 		addressCodec: addressCodec,
+		bankKeeper:   bankKeeper,
 	}
 }

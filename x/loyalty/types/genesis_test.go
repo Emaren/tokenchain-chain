@@ -22,12 +22,12 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
-				Params:              types.DefaultParams(),
-				CreatorallowlistMap: []types.Creatorallowlist{{Address: "0"}, {Address: "1"}},
-				VerifiedtokenMap:    []types.Verifiedtoken{{Denom: "token0"}, {Denom: "token1"}},
-				RewardaccrualMap:    []types.Rewardaccrual{{Key: "0"}, {Key: "1"}},
-			},
-			valid: true,
+				Params:                types.DefaultParams(),
+				CreatorallowlistMap:   []types.Creatorallowlist{{Address: "0"}, {Address: "1"}},
+				VerifiedtokenMap:      []types.Verifiedtoken{{Denom: "token0"}, {Denom: "token1"}},
+				RewardaccrualMap:      []types.Rewardaccrual{{Key: "0"}, {Key: "1"}},
+				RecoveryoperationList: []types.Recoveryoperation{{Id: 0}, {Id: 1}}, RecoveryoperationCount: 2,
+			}, valid: true,
 		}, {
 			desc: "duplicated creatorallowlist",
 			genState: &types.GenesisState{
@@ -40,8 +40,8 @@ func TestGenesisState_Validate(t *testing.T) {
 						Address: "0",
 					},
 				},
-				VerifiedtokenMap: []types.Verifiedtoken{{Denom: "token0"}, {Denom: "token1"}}, RewardaccrualMap: []types.Rewardaccrual{{Key: "0"}, {Key: "1"}}},
-			valid: false,
+				VerifiedtokenMap: []types.Verifiedtoken{{Denom: "token0"}, {Denom: "token1"}}, RewardaccrualMap: []types.Rewardaccrual{{Key: "0"}, {Key: "1"}}, RecoveryoperationList: []types.Recoveryoperation{{Id: 0}, {Id: 1}}, RecoveryoperationCount: 2,
+			}, valid: false,
 		}, {
 			desc: "duplicated verifiedtoken",
 			genState: &types.GenesisState{
@@ -54,8 +54,8 @@ func TestGenesisState_Validate(t *testing.T) {
 						Denom: "token0",
 					},
 				},
-				RewardaccrualMap: []types.Rewardaccrual{{Key: "0"}, {Key: "1"}}},
-			valid: false,
+				RewardaccrualMap: []types.Rewardaccrual{{Key: "0"}, {Key: "1"}}, RecoveryoperationList: []types.Recoveryoperation{{Id: 0}, {Id: 1}}, RecoveryoperationCount: 2,
+			}, valid: false,
 		}, {
 			desc: "duplicated rewardaccrual",
 			genState: &types.GenesisState{
@@ -68,6 +68,30 @@ func TestGenesisState_Validate(t *testing.T) {
 						Key: "0",
 					},
 				},
+				RecoveryoperationList: []types.Recoveryoperation{{Id: 0}, {Id: 1}}, RecoveryoperationCount: 2,
+			}, valid: false,
+		}, {
+			desc: "duplicated recoveryoperation",
+			genState: &types.GenesisState{
+				RecoveryoperationList: []types.Recoveryoperation{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		}, {
+			desc: "invalid recoveryoperation count",
+			genState: &types.GenesisState{
+				RecoveryoperationList: []types.Recoveryoperation{
+					{
+						Id: 1,
+					},
+				},
+				RecoveryoperationCount: 0,
 			},
 			valid: false,
 		},

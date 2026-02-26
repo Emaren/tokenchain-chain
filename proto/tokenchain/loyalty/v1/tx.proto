@@ -53,6 +53,15 @@ service Msg {
 
   // RecordRewardAccrual defines the RecordRewardAccrual RPC.
   rpc RecordRewardAccrual(MsgRecordRewardAccrual) returns (MsgRecordRewardAccrualResponse);
+
+  // QueueRecoveryTransfer defines the QueueRecoveryTransfer RPC.
+  rpc QueueRecoveryTransfer(MsgQueueRecoveryTransfer) returns (MsgQueueRecoveryTransferResponse);
+
+  // ExecuteRecoveryTransfer defines the ExecuteRecoveryTransfer RPC.
+  rpc ExecuteRecoveryTransfer(MsgExecuteRecoveryTransfer) returns (MsgExecuteRecoveryTransferResponse);
+
+  // CancelRecoveryTransfer defines the CancelRecoveryTransfer RPC.
+  rpc CancelRecoveryTransfer(MsgCancelRecoveryTransfer) returns (MsgCancelRecoveryTransferResponse);
 }
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
@@ -232,3 +241,37 @@ message MsgRecordRewardAccrual {
 
 // MsgRecordRewardAccrualResponse defines the MsgRecordRewardAccrualResponse message.
 message MsgRecordRewardAccrualResponse {}
+
+// MsgQueueRecoveryTransfer defines the MsgQueueRecoveryTransfer message.
+message MsgQueueRecoveryTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+  string from_address = 3;
+  string to_address = 4;
+  uint64 amount = 5;
+}
+
+// MsgQueueRecoveryTransferResponse defines the MsgQueueRecoveryTransferResponse message.
+message MsgQueueRecoveryTransferResponse {}
+
+// MsgExecuteRecoveryTransfer defines the MsgExecuteRecoveryTransfer message.
+message MsgExecuteRecoveryTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 id = 2;
+}
+
+// MsgExecuteRecoveryTransferResponse defines the MsgExecuteRecoveryTransferResponse message.
+message MsgExecuteRecoveryTransferResponse {}
+
+// MsgCancelRecoveryTransfer defines the MsgCancelRecoveryTransfer message.
+message MsgCancelRecoveryTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 id = 2;
+  string reason = 3;
+}
+
+// MsgCancelRecoveryTransferResponse defines the MsgCancelRecoveryTransferResponse message.
+message MsgCancelRecoveryTransferResponse {}
