@@ -35,7 +35,7 @@ This repository now includes a working chain baseline with:
 - on-chain accrual ledger (`rewardaccrual`) and user claim flow (`claim-reward`)
 - automatic daily rollup boundary in begin-block using `America/Edmonton`, with on-chain rollup marker persistence
 - daily rollup status query (`/tokenchain/loyalty/v1/daily_rollup/status`) for dashboard/indexer consumption
-- recovery operations filter query (`/tokenchain/loyalty/v1/recoveryoperation/filter`) with status/token/address + pagination
+- recovery operations filter query (`/tokenchain/loyalty/v1/recoveryoperations/filter`) with status/token/address + pagination
 - daily rollup timezone param default: `America/Edmonton`
 - timelock params defaults: testnet `1h`, mainnet `24h`
 - fee split params defaults: `7000/2000/1000` bps (validator / token stakers / merchant pool)

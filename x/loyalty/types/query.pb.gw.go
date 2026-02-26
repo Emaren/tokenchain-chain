@@ -1007,7 +1007,7 @@ var (
 
 	pattern_Query_ListRecoveryoperation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"tokenchain", "loyalty", "v1", "recoveryoperation"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_FilterRecoveryoperation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"tokenchain", "loyalty", "v1", "recoveryoperation", "filter"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_FilterRecoveryoperation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"tokenchain", "loyalty", "v1", "recoveryoperations", "filter"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_DailyRollupStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"tokenchain", "loyalty", "v1", "daily_rollup", "status"}, "", runtime.AssumeColonVerbOpt(false)))
 )

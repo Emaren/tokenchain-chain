@@ -63,7 +63,7 @@ service Query {
 
   // FilterRecoveryoperation returns recovery operations filtered by status/token/address fields.
   rpc FilterRecoveryoperation(QueryFilterRecoveryoperationRequest) returns (QueryFilterRecoveryoperationResponse) {
-    option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperation/filter";
+    option (google.api.http).get = "/tokenchain/loyalty/v1/recoveryoperations/filter";
   }
 
   // DailyRollupStatus returns rollup boundary status for the configured timezone.
