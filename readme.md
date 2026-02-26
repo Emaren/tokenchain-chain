@@ -18,6 +18,7 @@ This repository now includes a working chain baseline with:
 - creation mode policy (`admin_only`, `allowlisted`, `permissionless`)
 - creator allowlist (authority-gated)
 - verified business token registry with metadata and cap
+- verified token lookup via query-param endpoint (`/tokenchain/loyalty/v1/verifiedtoken_by_denom?denom=...`) for slash-safe factory denoms
 - automatic bank denom metadata publication for verified tokens (create/update/genesis import)
 - tokenfactory-style business denom canonicalization (`factory/{issuer}/{subdenom}`)
 - no-seizure default (`seizure_opt_in_default=false`)
@@ -36,6 +37,7 @@ This repository now includes a working chain baseline with:
 - on-chain accrual ledger (`rewardaccrual`) and user claim flow (`claim-reward`)
 - explicit reward pool funding tx (`fund-reward-pool`) to provision claim liquidity from operator wallets
 - enriched tx responses for `record-reward-accrual` and `claim-reward` (amounts, denom, key/date)
+- explicit overflow protection for reward accrual accounting (`ErrAccrualOverflow`, code `1117`)
 - automatic daily rollup boundary in begin-block using `America/Edmonton`, with on-chain rollup marker persistence
 - daily rollup status query (`/tokenchain/loyalty/v1/daily_rollup/status`) for dashboard/indexer consumption
 - reward accrual filter query (`/tokenchain/loyalty/v1/rewardaccruals/filter`) by address/denom + pagination
