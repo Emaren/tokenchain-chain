@@ -81,6 +81,9 @@ func (k msgServer) CreateVerifiedtoken(ctx context.Context, msg *types.MsgCreate
 	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
 	}
+	if err := k.setVerifiedTokenDenomMetadata(ctx, verifiedtoken); err != nil {
+		return nil, err
+	}
 
 	return &types.MsgCreateVerifiedtokenResponse{Denom: verifiedtoken.Denom}, nil
 }
@@ -150,6 +153,9 @@ func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdate
 
 	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "failed to update verifiedtoken")
+	}
+	if err := k.setVerifiedTokenDenomMetadata(ctx, verifiedtoken); err != nil {
+		return nil, err
 	}
 
 	return &types.MsgUpdateVerifiedtokenResponse{}, nil

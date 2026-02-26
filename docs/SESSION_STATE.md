@@ -15,6 +15,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - verified token registry
   - no-seizure default policy handling
   - strict full-denom minting (`factory/{issuer}/{subdenom}`) with on-chain hard cap enforcement
+  - automatic bank denom metadata publication on token create/update/genesis import
   - recovery policy hardening: `x/group` policy existence checks + network-aware timelock minimums
   - recovery execute authorization tightened (policy/authority only)
   - accrual and claim ledger

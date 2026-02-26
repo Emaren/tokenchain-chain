@@ -89,6 +89,13 @@ func TestVerifiedtokenMsgServerCreate(t *testing.T) {
 		require.Equal(t, creator, rst.Creator)
 		require.Equal(t, factoryDenom(creator, subdenom), rst.Denom)
 		require.EqualValues(t, 0, rst.MintedSupply)
+
+		metadata, ok := f.bankKeeper.denomMetadata[rst.Denom]
+		require.True(t, ok)
+		require.Equal(t, rst.Denom, metadata.Base)
+		require.Equal(t, subdenom, metadata.Display)
+		require.Equal(t, rst.Name, metadata.Name)
+		require.Equal(t, rst.Symbol, metadata.Symbol)
 	}
 }
 
@@ -177,6 +184,10 @@ func TestVerifiedtokenMsgServerUpdate(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, "Updated Token", rst.Name)
 			require.EqualValues(t, 2_000_000, rst.MaxSupply)
+			metadata, ok := f.bankKeeper.denomMetadata[denom]
+			require.True(t, ok)
+			require.Equal(t, "Updated Token", metadata.Name)
+			require.Equal(t, "updated", metadata.Symbol)
 		})
 	}
 }

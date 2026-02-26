@@ -18,6 +18,7 @@ This repository now includes a working chain baseline with:
 - creation mode policy (`admin_only`, `allowlisted`, `permissionless`)
 - creator allowlist (authority-gated)
 - verified business token registry with metadata and cap
+- automatic bank denom metadata publication for verified tokens (create/update/genesis import)
 - tokenfactory-style business denom canonicalization (`factory/{issuer}/{subdenom}`)
 - no-seizure default (`seizure_opt_in_default=false`)
 - optional recovery policy metadata (`recovery_group_policy`, timelock hours)

@@ -13,6 +13,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	grouptypes "github.com/cosmos/cosmos-sdk/x/group"
 
 	"tokenchain/x/loyalty/keeper"
@@ -31,6 +32,7 @@ type fixture struct {
 type mockBankKeeper struct {
 	accountBalances map[string]sdk.Coins
 	moduleBalances  map[string]sdk.Coins
+	denomMetadata   map[string]banktypes.Metadata
 }
 
 type mockGroupKeeper struct {
@@ -59,6 +61,7 @@ func newMockBankKeeper() *mockBankKeeper {
 	return &mockBankKeeper{
 		accountBalances: make(map[string]sdk.Coins),
 		moduleBalances:  make(map[string]sdk.Coins),
+		denomMetadata:   make(map[string]banktypes.Metadata),
 	}
 }
 
@@ -98,6 +101,10 @@ func (m *mockBankKeeper) SendCoinsFromAccountToModule(_ context.Context, senderA
 	m.accountBalances[senderAddr.String()] = accountBal.Sub(amt...)
 	m.moduleBalances[moduleName] = m.moduleBalances[moduleName].Add(amt...)
 	return nil
+}
+
+func (m *mockBankKeeper) SetDenomMetaData(_ context.Context, metadata banktypes.Metadata) {
+	m.denomMetadata[metadata.Base] = metadata
 }
 
 func initFixture(t *testing.T) *fixture {

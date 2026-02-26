@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cosmossdk.io/core/address"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	grouptypes "github.com/cosmos/cosmos-sdk/x/group"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
@@ -30,6 +31,7 @@ type BankKeeper interface {
 	MintCoins(context.Context, string, sdk.Coins) error
 	SendCoinsFromModuleToAccount(context.Context, string, sdk.AccAddress, sdk.Coins) error
 	SendCoinsFromAccountToModule(context.Context, sdk.AccAddress, string, sdk.Coins) error
+	SetDenomMetaData(context.Context, banktypes.Metadata)
 	// Methods imported from bank should be defined here
 }
 

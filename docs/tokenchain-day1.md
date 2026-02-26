@@ -31,6 +31,7 @@
 - Authority-gated allowlist management
 - Verified token registry:
   - metadata
+  - bank denom metadata publication (wallet/explorer-friendly units/name/symbol)
   - max supply cap
   - recovery policy metadata
   - tokenfactory-style denom format: `factory/{issuer}/{subdenom}`

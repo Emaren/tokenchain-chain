@@ -20,6 +20,9 @@ func (k Keeper) InitGenesis(ctx context.Context, genState types.GenesisState) er
 		if err := k.Verifiedtoken.Set(ctx, elem.Denom, elem); err != nil {
 			return err
 		}
+		if err := k.setVerifiedTokenDenomMetadata(ctx, elem); err != nil {
+			return err
+		}
 	}
 	for _, elem := range genState.RewardaccrualMap {
 		if err := k.Rewardaccrual.Set(ctx, elem.Key, elem); err != nil {
