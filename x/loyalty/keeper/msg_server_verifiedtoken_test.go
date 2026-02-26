@@ -12,6 +12,10 @@ import (
 	"tokenchain/x/loyalty/types"
 )
 
+func factoryDenom(issuer, subdenom string) string {
+	return fmt.Sprintf("factory/%s/%s", issuer, subdenom)
+}
+
 func baseVerifiedToken(creator, denom string) *types.MsgCreateVerifiedtoken {
 	return &types.MsgCreateVerifiedtoken{
 		Creator:               creator,
@@ -36,13 +40,14 @@ func TestVerifiedtokenMsgServerCreate(t *testing.T) {
 	creator := authorityAddress(t, f)
 
 	for i := 0; i < 5; i++ {
-		denom := fmt.Sprintf("token%d", i)
-		_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, denom))
+		subdenom := fmt.Sprintf("token%d", i)
+		_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, subdenom))
 		require.NoError(t, err)
 
-		rst, err := f.keeper.Verifiedtoken.Get(f.ctx, denom)
+		rst, err := f.keeper.Verifiedtoken.Get(f.ctx, factoryDenom(creator, subdenom))
 		require.NoError(t, err)
 		require.Equal(t, creator, rst.Creator)
+		require.Equal(t, factoryDenom(creator, subdenom), rst.Denom)
 		require.EqualValues(t, 0, rst.MintedSupply)
 	}
 }
@@ -53,8 +58,9 @@ func TestVerifiedtokenMsgServerUpdate(t *testing.T) {
 	creator := authorityAddress(t, f)
 	unauthorizedAddr := sample.AccAddress()
 
-	denom := "token0"
-	_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, denom))
+	subdenom := "token0"
+	denom := factoryDenom(creator, subdenom)
+	_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, subdenom))
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -102,7 +108,7 @@ func TestVerifiedtokenMsgServerUpdate(t *testing.T) {
 			desc: "completed",
 			request: &types.MsgUpdateVerifiedtoken{
 				Creator:               creator,
-				Denom:                 denom,
+				Denom:                 subdenom,
 				Issuer:                creator,
 				Name:                  "Updated Token",
 				Symbol:                "updated",
@@ -141,8 +147,9 @@ func TestVerifiedtokenMsgServerDelete(t *testing.T) {
 	creator := authorityAddress(t, f)
 	unauthorizedAddr := sample.AccAddress()
 
-	denom := "token0"
-	_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, denom))
+	subdenom := "token0"
+	denom := factoryDenom(creator, subdenom)
+	_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, subdenom))
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -154,7 +161,7 @@ func TestVerifiedtokenMsgServerDelete(t *testing.T) {
 			desc: "invalid address",
 			request: &types.MsgDeleteVerifiedtoken{
 				Creator: "invalid",
-				Denom:   denom,
+				Denom:   subdenom,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -178,7 +185,7 @@ func TestVerifiedtokenMsgServerDelete(t *testing.T) {
 			desc: "completed",
 			request: &types.MsgDeleteVerifiedtoken{
 				Creator: creator,
-				Denom:   denom,
+				Denom:   subdenom,
 			},
 		},
 	}

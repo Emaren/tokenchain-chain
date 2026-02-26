@@ -31,7 +31,9 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - `docs/tokenchain-day1.md`
 
 ## In Progress
-- TokenFactory parity work (replace interim verified-token mint path with full TokenFactory semantics).
+- TokenFactory parity work:
+  - completed tokenfactory-style denom canonicalization (`factory/{issuer}/{subdenom}`)
+  - remaining: native tokenfactory module parity and admin flow integration.
 
 ## Resume Plan
 1. Design and wire TokenFactory module path that preserves locked Day-1 policy rules.

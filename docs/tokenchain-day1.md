@@ -32,6 +32,7 @@
   - metadata
   - max supply cap
   - recovery policy metadata
+  - tokenfactory-style denom format: `factory/{issuer}/{subdenom}`
 - No-seizure default: `seizure_opt_in_default=false`
 - Hard cap enforcement in mint path (`mint-verified-token`)
 - Reward accrual ledger and claim path:

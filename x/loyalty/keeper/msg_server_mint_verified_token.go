@@ -24,11 +24,13 @@ func (k msgServer) MintVerifiedToken(ctx context.Context, msg *types.MsgMintVeri
 	if msg.Amount == 0 {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "amount must be greater than zero")
 	}
-	if err := sdk.ValidateDenom(msg.Denom); err != nil {
-		return nil, errorsmod.Wrap(types.ErrInvalidDenom, err.Error())
+	lookupDenom, err := k.resolveStoredDenom(ctx, msg.Creator, msg.Denom)
+	if err != nil {
+		return nil, err
 	}
-	if msg.Denom == sdk.DefaultBondDenom {
-		return nil, errorsmod.Wrap(types.ErrInvalidDenom, "cannot mint chain base denom via loyalty module")
+	msg.Denom = lookupDenom
+	if err := k.validateTokenFactoryDenom(msg.Denom); err != nil {
+		return nil, err
 	}
 
 	token, err := k.Verifiedtoken.Get(ctx, msg.Denom)

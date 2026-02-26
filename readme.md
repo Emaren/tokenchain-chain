@@ -17,6 +17,7 @@ This repository now includes a working chain baseline with:
 - creation mode policy (`admin_only`, `allowlisted`, `permissionless`)
 - creator allowlist (authority-gated)
 - verified business token registry with metadata and cap
+- tokenfactory-style business denom canonicalization (`factory/{issuer}/{subdenom}`)
 - no-seizure default (`seizure_opt_in_default=false`)
 - optional recovery policy metadata (`recovery_group_policy`, timelock hours)
 - hard-cap mint checks (`mint-verified-token` cannot exceed `max_supply`)
