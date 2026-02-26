@@ -45,7 +45,7 @@ func TestQueueRecoveryTransfer(t *testing.T) {
 	})
 	require.ErrorIs(t, err, types.ErrRecoveryUnauthorized)
 
-	_, err = srv.QueueRecoveryTransfer(ctx, &types.MsgQueueRecoveryTransfer{
+	queueResp, err := srv.QueueRecoveryTransfer(ctx, &types.MsgQueueRecoveryTransfer{
 		Creator:     creator,
 		Denom:       denom,
 		FromAddress: from,
@@ -58,6 +58,8 @@ func TestQueueRecoveryTransfer(t *testing.T) {
 	require.NoError(t, err)
 	require.NotZero(t, lastID)
 	opID := lastID - 1
+	require.EqualValues(t, opID, queueResp.Id)
+	require.Equal(t, types.RecoveryStatusQueued, queueResp.Status)
 
 	op, err := f.keeper.Recoveryoperation.Get(ctx, opID)
 	require.NoError(t, err)
@@ -76,15 +78,17 @@ func TestExecuteRecoveryTransfer(t *testing.T) {
 	from := sample.AccAddress()
 	to := sample.AccAddress()
 
-	_, err := srv.MintVerifiedToken(baseCtx, &types.MsgMintVerifiedToken{
+	mintResp, err := srv.MintVerifiedToken(baseCtx, &types.MsgMintVerifiedToken{
 		Creator:   creator,
 		Denom:     denom,
 		Recipient: from,
 		Amount:    50,
 	})
 	require.NoError(t, err)
+	require.Equal(t, denom, mintResp.Denom)
+	require.EqualValues(t, 50, mintResp.MintedSupply)
 
-	_, err = srv.QueueRecoveryTransfer(baseCtx, &types.MsgQueueRecoveryTransfer{
+	queueResp, err := srv.QueueRecoveryTransfer(baseCtx, &types.MsgQueueRecoveryTransfer{
 		Creator:     creator,
 		Denom:       denom,
 		FromAddress: from,
@@ -96,6 +100,7 @@ func TestExecuteRecoveryTransfer(t *testing.T) {
 	opID, err := f.keeper.RecoveryoperationSeq.Peek(baseCtx)
 	require.NoError(t, err)
 	opID--
+	require.EqualValues(t, opID, queueResp.Id)
 
 	_, err = srv.ExecuteRecoveryTransfer(baseCtx, &types.MsgExecuteRecoveryTransfer{
 		Creator: sample.AccAddress(),
@@ -104,11 +109,14 @@ func TestExecuteRecoveryTransfer(t *testing.T) {
 	require.ErrorIs(t, err, types.ErrRecoveryTooEarly)
 
 	execCtx := baseCtx.WithBlockTime(time.Unix(1700001000+3601, 0))
-	_, err = srv.ExecuteRecoveryTransfer(execCtx, &types.MsgExecuteRecoveryTransfer{
+	executeResp, err := srv.ExecuteRecoveryTransfer(execCtx, &types.MsgExecuteRecoveryTransfer{
 		Creator: sample.AccAddress(),
 		Id:      opID,
 	})
 	require.NoError(t, err)
+	require.EqualValues(t, opID, executeResp.Id)
+	require.Equal(t, types.RecoveryStatusExecuted, executeResp.Status)
+	require.EqualValues(t, 1700001000+3601, executeResp.ExecutedAt)
 
 	op, err := f.keeper.Recoveryoperation.Get(execCtx, opID)
 	require.NoError(t, err)
@@ -136,7 +144,7 @@ func TestCancelRecoveryTransfer(t *testing.T) {
 	from := sample.AccAddress()
 	to := sample.AccAddress()
 
-	_, err := srv.QueueRecoveryTransfer(baseCtx, &types.MsgQueueRecoveryTransfer{
+	queueResp, err := srv.QueueRecoveryTransfer(baseCtx, &types.MsgQueueRecoveryTransfer{
 		Creator:     creator,
 		Denom:       denom,
 		FromAddress: from,
@@ -148,6 +156,7 @@ func TestCancelRecoveryTransfer(t *testing.T) {
 	opID, err := f.keeper.RecoveryoperationSeq.Peek(baseCtx)
 	require.NoError(t, err)
 	opID--
+	require.EqualValues(t, opID, queueResp.Id)
 
 	_, err = srv.CancelRecoveryTransfer(baseCtx, &types.MsgCancelRecoveryTransfer{
 		Creator: sample.AccAddress(),
@@ -156,12 +165,15 @@ func TestCancelRecoveryTransfer(t *testing.T) {
 	})
 	require.ErrorIs(t, err, types.ErrRecoveryUnauthorized)
 
-	_, err = srv.CancelRecoveryTransfer(baseCtx, &types.MsgCancelRecoveryTransfer{
+	cancelResp, err := srv.CancelRecoveryTransfer(baseCtx, &types.MsgCancelRecoveryTransfer{
 		Creator: creator,
 		Id:      opID,
 		Reason:  "customer support request",
 	})
 	require.NoError(t, err)
+	require.EqualValues(t, opID, cancelResp.Id)
+	require.Equal(t, types.RecoveryStatusCancelled, cancelResp.Status)
+	require.EqualValues(t, 1700002000, cancelResp.CancelledAt)
 
 	op, err := f.keeper.Recoveryoperation.Get(baseCtx, opID)
 	require.NoError(t, err)

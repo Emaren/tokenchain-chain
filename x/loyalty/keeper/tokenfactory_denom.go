@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"context"
 	"fmt"
 	"regexp"
 	"strings"
@@ -68,29 +67,15 @@ func (k msgServer) validateTokenFactoryDenom(denom string) error {
 	return nil
 }
 
-func (k msgServer) resolveStoredDenom(ctx context.Context, creator, denom string) (string, error) {
-	exists, err := k.Verifiedtoken.Has(ctx, denom)
-	if err != nil {
-		return "", errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
+func (k msgServer) resolveStoredDenom(denom string) (string, error) {
+	denom = strings.TrimSpace(denom)
+	if denom == "" {
+		return "", errorsmod.Wrap(types.ErrInvalidDenom, "denom cannot be empty")
 	}
-	if exists {
-		return denom, nil
+	if !strings.HasPrefix(denom, tokenFactoryPrefix+"/") {
+		return "", errorsmod.Wrap(types.ErrInvalidDenom, "denom must be full tokenfactory format: factory/{issuer}/{subdenom}")
 	}
-
-	// Backward-compatible lookup for calls that pass a subdenom instead of the full tokenfactory denom.
-	if strings.HasPrefix(denom, tokenFactoryPrefix+"/") {
-		return denom, nil
-	}
-	candidate := fmt.Sprintf("%s/%s/%s", tokenFactoryPrefix, creator, strings.TrimSpace(denom))
-	exists, err = k.Verifiedtoken.Has(ctx, candidate)
-	if err != nil {
-		return "", errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
-	}
-	if exists {
-		return candidate, nil
-	}
-
-	return denom, nil
+	return denom, k.validateTokenFactoryDenom(denom)
 }
 
 func splitTokenFactoryDenom(denom string) (issuer string, subdenom string, err error) {

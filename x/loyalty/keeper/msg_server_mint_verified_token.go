@@ -24,7 +24,7 @@ func (k msgServer) MintVerifiedToken(ctx context.Context, msg *types.MsgMintVeri
 	if msg.Amount == 0 {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "amount must be greater than zero")
 	}
-	lookupDenom, err := k.resolveStoredDenom(ctx, msg.Creator, msg.Denom)
+	lookupDenom, err := k.resolveStoredDenom(msg.Denom)
 	if err != nil {
 		return nil, err
 	}
@@ -63,5 +63,8 @@ func (k msgServer) MintVerifiedToken(ctx context.Context, msg *types.MsgMintVeri
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
 	}
 
-	return &types.MsgMintVerifiedTokenResponse{}, nil
+	return &types.MsgMintVerifiedTokenResponse{
+		Denom:       token.Denom,
+		MintedSupply: token.MintedSupply,
+	}, nil
 }

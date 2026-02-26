@@ -88,5 +88,9 @@ func (k msgServer) ExecuteRecoveryTransfer(ctx context.Context, msg *types.MsgEx
 		),
 	)
 
-	return &types.MsgExecuteRecoveryTransferResponse{}, nil
+	return &types.MsgExecuteRecoveryTransferResponse{
+		Id:         op.Id,
+		Status:     op.Status,
+		ExecutedAt: op.ExecutedAt,
+	}, nil
 }

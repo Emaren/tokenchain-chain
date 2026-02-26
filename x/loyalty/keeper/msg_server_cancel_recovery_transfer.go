@@ -72,5 +72,9 @@ func (k msgServer) CancelRecoveryTransfer(ctx context.Context, msg *types.MsgCan
 		),
 	)
 
-	return &types.MsgCancelRecoveryTransferResponse{}, nil
+	return &types.MsgCancelRecoveryTransferResponse{
+		Id:          op.Id,
+		Status:      op.Status,
+		CancelledAt: op.CancelledAt,
+	}, nil
 }

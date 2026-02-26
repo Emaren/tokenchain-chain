@@ -89,14 +89,14 @@ func (k msgServer) CreateVerifiedtoken(ctx context.Context, msg *types.MsgCreate
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
 	}
 
-	return &types.MsgCreateVerifiedtokenResponse{}, nil
+	return &types.MsgCreateVerifiedtokenResponse{Denom: verifiedtoken.Denom}, nil
 }
 
 func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdateVerifiedtoken) (*types.MsgUpdateVerifiedtokenResponse, error) {
 	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid signer address: %s", err))
 	}
-	lookupDenom, err := k.resolveStoredDenom(ctx, msg.Creator, msg.Denom)
+	lookupDenom, err := k.resolveStoredDenom(msg.Denom)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +173,7 @@ func (k msgServer) DeleteVerifiedtoken(ctx context.Context, msg *types.MsgDelete
 	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid signer address: %s", err))
 	}
-	lookupDenom, err := k.resolveStoredDenom(ctx, msg.Creator, msg.Denom)
+	lookupDenom, err := k.resolveStoredDenom(msg.Denom)
 	if err != nil {
 		return nil, err
 	}

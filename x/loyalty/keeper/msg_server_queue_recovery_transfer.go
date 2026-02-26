@@ -105,5 +105,9 @@ func (k msgServer) QueueRecoveryTransfer(ctx context.Context, msg *types.MsgQueu
 		),
 	)
 
-	return &types.MsgQueueRecoveryTransferResponse{}, nil
+	return &types.MsgQueueRecoveryTransferResponse{
+		Id:           op.Id,
+		Status:       op.Status,
+		ExecuteAfter: op.ExecuteAfter,
+	}, nil
 }

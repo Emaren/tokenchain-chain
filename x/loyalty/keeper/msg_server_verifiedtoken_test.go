@@ -41,8 +41,9 @@ func TestVerifiedtokenMsgServerCreate(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		subdenom := fmt.Sprintf("token%d", i)
-		_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, subdenom))
+		resp, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, subdenom))
 		require.NoError(t, err)
+		require.Equal(t, factoryDenom(creator, subdenom), resp.Denom)
 
 		rst, err := f.keeper.Verifiedtoken.Get(f.ctx, factoryDenom(creator, subdenom))
 		require.NoError(t, err)
@@ -94,7 +95,7 @@ func TestVerifiedtokenMsgServerUpdate(t *testing.T) {
 			desc: "key not found",
 			request: &types.MsgUpdateVerifiedtoken{
 				Creator:   creator,
-				Denom:     "missingtoken",
+				Denom:     factoryDenom(creator, "missingtoken"),
 				Issuer:    creator,
 				Name:      "Updated",
 				Symbol:    "updated",
@@ -108,7 +109,7 @@ func TestVerifiedtokenMsgServerUpdate(t *testing.T) {
 			desc: "completed",
 			request: &types.MsgUpdateVerifiedtoken{
 				Creator:               creator,
-				Denom:                 subdenom,
+				Denom:                 denom,
 				Issuer:                creator,
 				Name:                  "Updated Token",
 				Symbol:                "updated",
@@ -177,7 +178,7 @@ func TestVerifiedtokenMsgServerDelete(t *testing.T) {
 			desc: "key not found",
 			request: &types.MsgDeleteVerifiedtoken{
 				Creator: creator,
-				Denom:   "missingtoken",
+				Denom:   factoryDenom(creator, "missingtoken"),
 			},
 			err: sdkerrors.ErrKeyNotFound,
 		},
@@ -185,7 +186,7 @@ func TestVerifiedtokenMsgServerDelete(t *testing.T) {
 			desc: "completed",
 			request: &types.MsgDeleteVerifiedtoken{
 				Creator: creator,
-				Denom:   subdenom,
+				Denom:   denom,
 			},
 		},
 	}

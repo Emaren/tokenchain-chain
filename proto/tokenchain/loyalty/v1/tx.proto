@@ -136,7 +136,9 @@ message MsgCreateVerifiedtoken {
 }
 
 // MsgCreateVerifiedtokenResponse defines the MsgCreateVerifiedtokenResponse message.
-message MsgCreateVerifiedtokenResponse {}
+message MsgCreateVerifiedtokenResponse {
+  string denom = 1;
+}
 
 // MsgUpdateVerifiedtoken defines the MsgUpdateVerifiedtoken message.
 message MsgUpdateVerifiedtoken {
@@ -217,7 +219,10 @@ message MsgMintVerifiedToken {
 }
 
 // MsgMintVerifiedTokenResponse defines the MsgMintVerifiedTokenResponse message.
-message MsgMintVerifiedTokenResponse {}
+message MsgMintVerifiedTokenResponse {
+  string denom = 1;
+  uint64 minted_supply = 2;
+}
 
 // MsgClaimReward defines the MsgClaimReward message.
 message MsgClaimReward {
@@ -253,7 +258,11 @@ message MsgQueueRecoveryTransfer {
 }
 
 // MsgQueueRecoveryTransferResponse defines the MsgQueueRecoveryTransferResponse message.
-message MsgQueueRecoveryTransferResponse {}
+message MsgQueueRecoveryTransferResponse {
+  uint64 id = 1;
+  string status = 2;
+  uint64 execute_after = 3;
+}
 
 // MsgExecuteRecoveryTransfer defines the MsgExecuteRecoveryTransfer message.
 message MsgExecuteRecoveryTransfer {
@@ -263,7 +272,11 @@ message MsgExecuteRecoveryTransfer {
 }
 
 // MsgExecuteRecoveryTransferResponse defines the MsgExecuteRecoveryTransferResponse message.
-message MsgExecuteRecoveryTransferResponse {}
+message MsgExecuteRecoveryTransferResponse {
+  uint64 id = 1;
+  string status = 2;
+  uint64 executed_at = 3;
+}
 
 // MsgCancelRecoveryTransfer defines the MsgCancelRecoveryTransfer message.
 message MsgCancelRecoveryTransfer {
@@ -274,4 +287,8 @@ message MsgCancelRecoveryTransfer {
 }
 
 // MsgCancelRecoveryTransferResponse defines the MsgCancelRecoveryTransferResponse message.
-message MsgCancelRecoveryTransferResponse {}
+message MsgCancelRecoveryTransferResponse {
+  uint64 id = 1;
+  string status = 2;
+  uint64 cancelled_at = 3;
+}
