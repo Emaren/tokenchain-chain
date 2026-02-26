@@ -39,7 +39,7 @@ jobs:
       - name: Build Linux Release Asset
         if: ${{ steps.vars.outputs.should_release == 'true' }}
         env:
-          GOFLAGS: "-buildvcs=false -tags=purego"
+          GOFLAGS: "-buildvcs=false -tags=go1.27"
         run: |
           set -euo pipefail
           mkdir -p dist release
