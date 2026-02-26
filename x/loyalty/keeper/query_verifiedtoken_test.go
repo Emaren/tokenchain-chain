@@ -29,6 +29,8 @@ func createNVerifiedtoken(keeper keeper.Keeper, ctx context.Context, n int) []ty
 		items[i].SeizureOptIn = true
 		items[i].RecoveryGroupPolicy = strconv.Itoa(i)
 		items[i].RecoveryTimelockHours = uint64(i)
+		items[i].MerchantIncentiveStakersBps = types.DefaultMerchantIncentiveStakersBps
+		items[i].MerchantIncentiveTreasuryBps = types.DefaultMerchantIncentiveTreasuryBps
 		_ = keeper.Verifiedtoken.Set(ctx, items[i].Denom, items[i])
 	}
 	return items
@@ -159,4 +161,24 @@ func TestVerifiedtokenQueryByDenomParam(t *testing.T) {
 		_, err := qs.GetVerifiedtokenByDenom(f.ctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
+}
+
+func TestVerifiedtokenQueryLegacyRoutingDefaults(t *testing.T) {
+	f := initFixture(t)
+	qs := keeper.NewQueryServerImpl(f.keeper)
+	denom := "legacy-denom"
+	legacy := types.Verifiedtoken{
+		Denom:                        denom,
+		Issuer:                       "legacy-issuer",
+		Name:                         "legacy",
+		Symbol:                       "LEG",
+		MerchantIncentiveStakersBps:  0,
+		MerchantIncentiveTreasuryBps: 0,
+	}
+	require.NoError(t, f.keeper.Verifiedtoken.Set(f.ctx, denom, legacy))
+
+	resp, err := qs.GetVerifiedtoken(f.ctx, &types.QueryGetVerifiedtokenRequest{Denom: denom})
+	require.NoError(t, err)
+	require.EqualValues(t, types.DefaultMerchantIncentiveStakersBps, resp.Verifiedtoken.MerchantIncentiveStakersBps)
+	require.EqualValues(t, types.DefaultMerchantIncentiveTreasuryBps, resp.Verifiedtoken.MerchantIncentiveTreasuryBps)
 }

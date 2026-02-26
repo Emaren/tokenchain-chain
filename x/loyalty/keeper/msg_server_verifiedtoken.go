@@ -116,6 +116,7 @@ func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdate
 
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
 	}
+	val = normalizeMerchantIncentiveRouting(val)
 
 	if _, err := k.addressCodec.StringToBytes(msg.Issuer); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid issuer address: %s", err))

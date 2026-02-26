@@ -22,7 +22,7 @@ func (q queryServer) ListVerifiedtoken(ctx context.Context, req *types.QueryAllV
 		q.k.Verifiedtoken,
 		req.Pagination,
 		func(_ string, value types.Verifiedtoken) (types.Verifiedtoken, error) {
-			return value, nil
+			return normalizeMerchantIncentiveRouting(value), nil
 		},
 	)
 	if err != nil {
@@ -46,5 +46,5 @@ func (q queryServer) GetVerifiedtoken(ctx context.Context, req *types.QueryGetVe
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
-	return &types.QueryGetVerifiedtokenResponse{Verifiedtoken: val}, nil
+	return &types.QueryGetVerifiedtokenResponse{Verifiedtoken: normalizeMerchantIncentiveRouting(val)}, nil
 }

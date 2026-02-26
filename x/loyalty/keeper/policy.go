@@ -117,3 +117,11 @@ func (k Keeper) ensureGroupPolicyExists(ctx context.Context, policyAddress strin
 
 	return nil
 }
+
+func normalizeMerchantIncentiveRouting(token types.Verifiedtoken) types.Verifiedtoken {
+	if token.MerchantIncentiveStakersBps == 0 && token.MerchantIncentiveTreasuryBps == 0 {
+		token.MerchantIncentiveStakersBps = types.DefaultMerchantIncentiveStakersBps
+		token.MerchantIncentiveTreasuryBps = types.DefaultMerchantIncentiveTreasuryBps
+	}
+	return token
+}
