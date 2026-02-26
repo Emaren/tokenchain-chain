@@ -1,0 +1,11 @@
+syntax = "proto3";
+package tokenchain.loyalty.v1;
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Creatorallowlist defines the Creatorallowlist message.
+message Creatorallowlist {
+  string address = 1;
+  bool enabled = 2;
+  string creator = 3;
+}

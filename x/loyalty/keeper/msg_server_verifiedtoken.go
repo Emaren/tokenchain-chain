@@ -1,0 +1,198 @@
+package keeper
+
+import (
+	"context"
+	"errors"
+	"fmt"
+
+	"tokenchain/x/loyalty/types"
+
+	"cosmossdk.io/collections"
+	errorsmod "cosmossdk.io/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
+func (k msgServer) CreateVerifiedtoken(ctx context.Context, msg *types.MsgCreateVerifiedtoken) (*types.MsgCreateVerifiedtokenResponse, error) {
+	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid address: %s", err))
+	}
+
+	if msg.Issuer == "" {
+		msg.Issuer = msg.Creator
+	}
+	if _, err := k.addressCodec.StringToBytes(msg.Issuer); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid issuer address: %s", err))
+	}
+	if err := sdk.ValidateDenom(msg.Denom); err != nil {
+		return nil, errorsmod.Wrap(types.ErrInvalidDenom, err.Error())
+	}
+	if msg.Denom == sdk.DefaultBondDenom {
+		return nil, errorsmod.Wrap(types.ErrInvalidDenom, "cannot create a business token using the chain base denom")
+	}
+	if msg.MaxSupply == 0 {
+		return nil, errorsmod.Wrap(types.ErrInvalidCap, "max supply must be greater than zero")
+	}
+	if msg.MintedSupply != 0 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "minted_supply must be zero on create; use mint-verified-token")
+	}
+
+	params, err := k.getParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	allowed, err := k.creatorCanCreateToken(ctx, msg.Creator, params.CreationMode)
+	if err != nil {
+		return nil, err
+	}
+	if !allowed {
+		return nil, errorsmod.Wrap(types.ErrCreatorNotAllowed, "creator is not authorized for the current creation mode")
+	}
+
+	// Check if the value already exists
+	ok, err := k.Verifiedtoken.Has(ctx, msg.Denom)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
+	} else if ok {
+		return nil, errorsmod.Wrap(types.ErrTokenExists, msg.Denom)
+	}
+
+	recoveryTimelock := msg.RecoveryTimelockHours
+	recoveryPolicy := msg.RecoveryGroupPolicy
+	if !msg.SeizureOptIn {
+		recoveryTimelock = 0
+		recoveryPolicy = ""
+	} else {
+		if recoveryPolicy == "" {
+			return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "recovery group policy is required when seizure is enabled")
+		}
+		if recoveryTimelock < params.TestnetTimelockHours {
+			return nil, errorsmod.Wrapf(types.ErrRecoveryPolicy, "recovery timelock must be at least %d hours", params.TestnetTimelockHours)
+		}
+	}
+
+	var verifiedtoken = types.Verifiedtoken{
+		Creator:               msg.Creator,
+		Denom:                 msg.Denom,
+		Issuer:                msg.Issuer,
+		Name:                  msg.Name,
+		Symbol:                msg.Symbol,
+		Description:           msg.Description,
+		Website:               msg.Website,
+		MaxSupply:             msg.MaxSupply,
+		MintedSupply:          0,
+		Verified:              msg.Verified,
+		SeizureOptIn:          msg.SeizureOptIn,
+		RecoveryGroupPolicy:   recoveryPolicy,
+		RecoveryTimelockHours: recoveryTimelock,
+	}
+
+	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
+	}
+
+	return &types.MsgCreateVerifiedtokenResponse{}, nil
+}
+
+func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdateVerifiedtoken) (*types.MsgUpdateVerifiedtokenResponse, error) {
+	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid signer address: %s", err))
+	}
+
+	// Check if the value exists
+	val, err := k.Verifiedtoken.Get(ctx, msg.Denom)
+	if err != nil {
+		if errors.Is(err, collections.ErrNotFound) {
+			return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		}
+
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
+	}
+
+	if _, err := k.addressCodec.StringToBytes(msg.Issuer); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid issuer address: %s", err))
+	}
+	if err := sdk.ValidateDenom(msg.Denom); err != nil {
+		return nil, errorsmod.Wrap(types.ErrInvalidDenom, err.Error())
+	}
+	if msg.MaxSupply < val.MintedSupply {
+		return nil, errorsmod.Wrapf(types.ErrInvalidCap, "max supply cannot be lower than minted supply (%d)", val.MintedSupply)
+	}
+
+	// Checks if the msg creator is the same as the current owner or the authority.
+	isAuthority := k.ensureAuthority(msg.Creator) == nil
+	if msg.Creator != val.Creator && !isAuthority {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	params, err := k.getParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	recoveryTimelock := msg.RecoveryTimelockHours
+	recoveryPolicy := msg.RecoveryGroupPolicy
+	if !msg.SeizureOptIn {
+		recoveryTimelock = 0
+		recoveryPolicy = ""
+	} else {
+		if recoveryPolicy == "" {
+			return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "recovery group policy is required when seizure is enabled")
+		}
+		if recoveryTimelock < params.TestnetTimelockHours {
+			return nil, errorsmod.Wrapf(types.ErrRecoveryPolicy, "recovery timelock must be at least %d hours", params.TestnetTimelockHours)
+		}
+	}
+
+	var verifiedtoken = types.Verifiedtoken{
+		Creator:               val.Creator,
+		Denom:                 msg.Denom,
+		Issuer:                msg.Issuer,
+		Name:                  msg.Name,
+		Symbol:                msg.Symbol,
+		Description:           msg.Description,
+		Website:               msg.Website,
+		MaxSupply:             msg.MaxSupply,
+		MintedSupply:          val.MintedSupply,
+		Verified:              msg.Verified,
+		SeizureOptIn:          msg.SeizureOptIn,
+		RecoveryGroupPolicy:   recoveryPolicy,
+		RecoveryTimelockHours: recoveryTimelock,
+	}
+
+	if err := k.Verifiedtoken.Set(ctx, verifiedtoken.Denom, verifiedtoken); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "failed to update verifiedtoken")
+	}
+
+	return &types.MsgUpdateVerifiedtokenResponse{}, nil
+}
+
+func (k msgServer) DeleteVerifiedtoken(ctx context.Context, msg *types.MsgDeleteVerifiedtoken) (*types.MsgDeleteVerifiedtokenResponse, error) {
+	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid signer address: %s", err))
+	}
+
+	// Check if the value exists
+	val, err := k.Verifiedtoken.Get(ctx, msg.Denom)
+	if err != nil {
+		if errors.Is(err, collections.ErrNotFound) {
+			return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		}
+
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
+	}
+
+	// Checks if the msg creator is the same as the current owner or the authority.
+	isAuthority := k.ensureAuthority(msg.Creator) == nil
+	if msg.Creator != val.Creator && !isAuthority {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+	if val.MintedSupply > 0 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "cannot delete token with non-zero minted supply")
+	}
+
+	if err := k.Verifiedtoken.Remove(ctx, msg.Denom); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "failed to remove verifiedtoken")
+	}
+
+	return &types.MsgDeleteVerifiedtokenResponse{}, nil
+}

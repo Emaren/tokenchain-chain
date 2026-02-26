@@ -1,0 +1,234 @@
+syntax = "proto3";
+
+package tokenchain.loyalty.v1;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "tokenchain/loyalty/v1/params.proto";
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Msg defines the Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // CreateCreatorallowlist defines the CreateCreatorallowlist RPC.
+  rpc CreateCreatorallowlist(MsgCreateCreatorallowlist) returns (MsgCreateCreatorallowlistResponse);
+
+  // UpdateCreatorallowlist defines the UpdateCreatorallowlist RPC.
+  rpc UpdateCreatorallowlist(MsgUpdateCreatorallowlist) returns (MsgUpdateCreatorallowlistResponse);
+
+  // DeleteCreatorallowlist defines the DeleteCreatorallowlist RPC.
+  rpc DeleteCreatorallowlist(MsgDeleteCreatorallowlist) returns (MsgDeleteCreatorallowlistResponse);
+
+  // CreateVerifiedtoken defines the CreateVerifiedtoken RPC.
+  rpc CreateVerifiedtoken(MsgCreateVerifiedtoken) returns (MsgCreateVerifiedtokenResponse);
+
+  // UpdateVerifiedtoken defines the UpdateVerifiedtoken RPC.
+  rpc UpdateVerifiedtoken(MsgUpdateVerifiedtoken) returns (MsgUpdateVerifiedtokenResponse);
+
+  // DeleteVerifiedtoken defines the DeleteVerifiedtoken RPC.
+  rpc DeleteVerifiedtoken(MsgDeleteVerifiedtoken) returns (MsgDeleteVerifiedtokenResponse);
+
+  // CreateRewardaccrual defines the CreateRewardaccrual RPC.
+  rpc CreateRewardaccrual(MsgCreateRewardaccrual) returns (MsgCreateRewardaccrualResponse);
+
+  // UpdateRewardaccrual defines the UpdateRewardaccrual RPC.
+  rpc UpdateRewardaccrual(MsgUpdateRewardaccrual) returns (MsgUpdateRewardaccrualResponse);
+
+  // DeleteRewardaccrual defines the DeleteRewardaccrual RPC.
+  rpc DeleteRewardaccrual(MsgDeleteRewardaccrual) returns (MsgDeleteRewardaccrualResponse);
+
+  // MintVerifiedToken defines the MintVerifiedToken RPC.
+  rpc MintVerifiedToken(MsgMintVerifiedToken) returns (MsgMintVerifiedTokenResponse);
+
+  // ClaimReward defines the ClaimReward RPC.
+  rpc ClaimReward(MsgClaimReward) returns (MsgClaimRewardResponse);
+
+  // RecordRewardAccrual defines the RecordRewardAccrual RPC.
+  rpc RecordRewardAccrual(MsgRecordRewardAccrual) returns (MsgRecordRewardAccrualResponse);
+}
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "tokenchain/x/loyalty/MsgUpdateParams";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // params defines the module parameters to update.
+
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}
+
+// MsgCreateCreatorallowlist defines the MsgCreateCreatorallowlist message.
+message MsgCreateCreatorallowlist {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2;
+  bool enabled = 3;
+}
+
+// MsgCreateCreatorallowlistResponse defines the MsgCreateCreatorallowlistResponse message.
+message MsgCreateCreatorallowlistResponse {}
+
+// MsgUpdateCreatorallowlist defines the MsgUpdateCreatorallowlist message.
+message MsgUpdateCreatorallowlist {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2;
+  bool enabled = 3;
+}
+
+// MsgUpdateCreatorallowlistResponse defines the MsgUpdateCreatorallowlistResponse message.
+message MsgUpdateCreatorallowlistResponse {}
+
+// MsgDeleteCreatorallowlist defines the MsgDeleteCreatorallowlist message.
+message MsgDeleteCreatorallowlist {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2;
+}
+
+// MsgDeleteCreatorallowlistResponse defines the MsgDeleteCreatorallowlistResponse message.
+message MsgDeleteCreatorallowlistResponse {}
+
+// MsgCreateVerifiedtoken defines the MsgCreateVerifiedtoken message.
+message MsgCreateVerifiedtoken {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+  string issuer = 3;
+  string name = 4;
+  string symbol = 5;
+  string description = 6;
+  string website = 7;
+  uint64 max_supply = 8;
+  uint64 minted_supply = 9;
+  bool verified = 10;
+  bool seizure_opt_in = 11;
+  string recovery_group_policy = 12;
+  uint64 recovery_timelock_hours = 13;
+}
+
+// MsgCreateVerifiedtokenResponse defines the MsgCreateVerifiedtokenResponse message.
+message MsgCreateVerifiedtokenResponse {}
+
+// MsgUpdateVerifiedtoken defines the MsgUpdateVerifiedtoken message.
+message MsgUpdateVerifiedtoken {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+  string issuer = 3;
+  string name = 4;
+  string symbol = 5;
+  string description = 6;
+  string website = 7;
+  uint64 max_supply = 8;
+  uint64 minted_supply = 9;
+  bool verified = 10;
+  bool seizure_opt_in = 11;
+  string recovery_group_policy = 12;
+  uint64 recovery_timelock_hours = 13;
+}
+
+// MsgUpdateVerifiedtokenResponse defines the MsgUpdateVerifiedtokenResponse message.
+message MsgUpdateVerifiedtokenResponse {}
+
+// MsgDeleteVerifiedtoken defines the MsgDeleteVerifiedtoken message.
+message MsgDeleteVerifiedtoken {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+}
+
+// MsgDeleteVerifiedtokenResponse defines the MsgDeleteVerifiedtokenResponse message.
+message MsgDeleteVerifiedtokenResponse {}
+
+// MsgCreateRewardaccrual defines the MsgCreateRewardaccrual message.
+message MsgCreateRewardaccrual {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string key = 2;
+  string address = 3;
+  string denom = 4;
+  uint64 amount = 5;
+  string last_rollup_date = 6;
+}
+
+// MsgCreateRewardaccrualResponse defines the MsgCreateRewardaccrualResponse message.
+message MsgCreateRewardaccrualResponse {}
+
+// MsgUpdateRewardaccrual defines the MsgUpdateRewardaccrual message.
+message MsgUpdateRewardaccrual {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string key = 2;
+  string address = 3;
+  string denom = 4;
+  uint64 amount = 5;
+  string last_rollup_date = 6;
+}
+
+// MsgUpdateRewardaccrualResponse defines the MsgUpdateRewardaccrualResponse message.
+message MsgUpdateRewardaccrualResponse {}
+
+// MsgDeleteRewardaccrual defines the MsgDeleteRewardaccrual message.
+message MsgDeleteRewardaccrual {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string key = 2;
+}
+
+// MsgDeleteRewardaccrualResponse defines the MsgDeleteRewardaccrualResponse message.
+message MsgDeleteRewardaccrualResponse {}
+
+// MsgMintVerifiedToken defines the MsgMintVerifiedToken message.
+message MsgMintVerifiedToken {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+  string recipient = 3;
+  uint64 amount = 4;
+}
+
+// MsgMintVerifiedTokenResponse defines the MsgMintVerifiedTokenResponse message.
+message MsgMintVerifiedTokenResponse {}
+
+// MsgClaimReward defines the MsgClaimReward message.
+message MsgClaimReward {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+}
+
+// MsgClaimRewardResponse defines the MsgClaimRewardResponse message.
+message MsgClaimRewardResponse {}
+
+// MsgRecordRewardAccrual defines the MsgRecordRewardAccrual message.
+message MsgRecordRewardAccrual {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2;
+  string denom = 3;
+  uint64 amount = 4;
+  string date = 5;
+}
+
+// MsgRecordRewardAccrualResponse defines the MsgRecordRewardAccrualResponse message.
+message MsgRecordRewardAccrualResponse {}

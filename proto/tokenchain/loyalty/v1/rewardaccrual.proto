@@ -1,0 +1,14 @@
+syntax = "proto3";
+package tokenchain.loyalty.v1;
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Rewardaccrual defines the Rewardaccrual message.
+message Rewardaccrual {
+  string key = 1;
+  string address = 2;
+  string denom = 3;
+  uint64 amount = 4;
+  string last_rollup_date = 5;
+  string creator = 6;
+}

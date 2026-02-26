@@ -1,0 +1,20 @@
+version: 1
+validation: sovereign
+default_denom: utoken
+accounts:
+- name: founder
+  coins:
+  - 900000000000utoken
+- name: treasury
+  coins:
+  - 100000000000utoken
+client:
+  openapi:
+    path: docs/static/openapi.json
+faucet:
+  name: treasury
+  coins:
+  - 1000000utoken
+validators:
+- name: founder
+  bonded: 50000000utoken

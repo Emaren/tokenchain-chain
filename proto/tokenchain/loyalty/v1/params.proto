@@ -1,0 +1,22 @@
+syntax = "proto3";
+package tokenchain.loyalty.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "tokenchain/x/loyalty/Params";
+  option (gogoproto.equal) = true;
+
+  string creation_mode = 1;
+  string daily_rollup_timezone = 2;
+  uint64 testnet_timelock_hours = 3;
+  uint64 mainnet_timelock_hours = 4;
+  uint64 fee_split_validator_bps = 5;
+  uint64 fee_split_token_stakers_bps = 6;
+  uint64 fee_split_merchant_pool_bps = 7;
+  bool seizure_opt_in_default = 8;
+}

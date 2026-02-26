@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package tokenchain.loyalty.v1;
+
+import "amino/amino.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "tokenchain/loyalty/v1/creatorallowlist.proto";
+import "tokenchain/loyalty/v1/params.proto";
+import "tokenchain/loyalty/v1/rewardaccrual.proto";
+import "tokenchain/loyalty/v1/verifiedtoken.proto";
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/params";
+  }
+
+  // ListCreatorallowlist Queries a list of Creatorallowlist items.
+  rpc GetCreatorallowlist(QueryGetCreatorallowlistRequest) returns (QueryGetCreatorallowlistResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/creatorallowlist/{address}";
+  }
+
+  // ListCreatorallowlist defines the ListCreatorallowlist RPC.
+  rpc ListCreatorallowlist(QueryAllCreatorallowlistRequest) returns (QueryAllCreatorallowlistResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/creatorallowlist";
+  }
+
+  // ListVerifiedtoken Queries a list of Verifiedtoken items.
+  rpc GetVerifiedtoken(QueryGetVerifiedtokenRequest) returns (QueryGetVerifiedtokenResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/verifiedtoken/{denom}";
+  }
+
+  // ListVerifiedtoken defines the ListVerifiedtoken RPC.
+  rpc ListVerifiedtoken(QueryAllVerifiedtokenRequest) returns (QueryAllVerifiedtokenResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/verifiedtoken";
+  }
+
+  // ListRewardaccrual Queries a list of Rewardaccrual items.
+  rpc GetRewardaccrual(QueryGetRewardaccrualRequest) returns (QueryGetRewardaccrualResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/rewardaccrual/{key}";
+  }
+
+  // ListRewardaccrual defines the ListRewardaccrual RPC.
+  rpc ListRewardaccrual(QueryAllRewardaccrualRequest) returns (QueryAllRewardaccrualResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/rewardaccrual";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// QueryGetCreatorallowlistRequest defines the QueryGetCreatorallowlistRequest message.
+message QueryGetCreatorallowlistRequest {
+  string address = 1;
+}
+
+// QueryGetCreatorallowlistResponse defines the QueryGetCreatorallowlistResponse message.
+message QueryGetCreatorallowlistResponse {
+  Creatorallowlist creatorallowlist = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAllCreatorallowlistRequest defines the QueryAllCreatorallowlistRequest message.
+message QueryAllCreatorallowlistRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryAllCreatorallowlistResponse defines the QueryAllCreatorallowlistResponse message.
+message QueryAllCreatorallowlistResponse {
+  repeated Creatorallowlist creatorallowlist = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryGetVerifiedtokenRequest defines the QueryGetVerifiedtokenRequest message.
+message QueryGetVerifiedtokenRequest {
+  string denom = 1;
+}
+
+// QueryGetVerifiedtokenResponse defines the QueryGetVerifiedtokenResponse message.
+message QueryGetVerifiedtokenResponse {
+  Verifiedtoken verifiedtoken = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAllVerifiedtokenRequest defines the QueryAllVerifiedtokenRequest message.
+message QueryAllVerifiedtokenRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryAllVerifiedtokenResponse defines the QueryAllVerifiedtokenResponse message.
+message QueryAllVerifiedtokenResponse {
+  repeated Verifiedtoken verifiedtoken = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryGetRewardaccrualRequest defines the QueryGetRewardaccrualRequest message.
+message QueryGetRewardaccrualRequest {
+  string key = 1;
+}
+
+// QueryGetRewardaccrualResponse defines the QueryGetRewardaccrualResponse message.
+message QueryGetRewardaccrualResponse {
+  Rewardaccrual rewardaccrual = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAllRewardaccrualRequest defines the QueryAllRewardaccrualRequest message.
+message QueryAllRewardaccrualRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryAllRewardaccrualResponse defines the QueryAllRewardaccrualResponse message.
+message QueryAllRewardaccrualResponse {
+  repeated Rewardaccrual rewardaccrual = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

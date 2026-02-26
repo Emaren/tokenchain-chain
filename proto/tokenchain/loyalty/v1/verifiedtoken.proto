@@ -1,0 +1,21 @@
+syntax = "proto3";
+package tokenchain.loyalty.v1;
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// Verifiedtoken defines the Verifiedtoken message.
+message Verifiedtoken {
+  string denom = 1;
+  string issuer = 2;
+  string name = 3;
+  string symbol = 4;
+  string description = 5;
+  string website = 6;
+  uint64 max_supply = 7;
+  uint64 minted_supply = 8;
+  bool verified = 9;
+  bool seizure_opt_in = 10;
+  string recovery_group_policy = 11;
+  uint64 recovery_timelock_hours = 12;
+  string creator = 13;
+}

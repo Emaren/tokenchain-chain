@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package tokenchain.loyalty.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "tokenchain/loyalty/v1/creatorallowlist.proto";
+import "tokenchain/loyalty/v1/params.proto";
+import "tokenchain/loyalty/v1/rewardaccrual.proto";
+import "tokenchain/loyalty/v1/verifiedtoken.proto";
+
+option go_package = "tokenchain/x/loyalty/types";
+
+// GenesisState defines the loyalty module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+  repeated Creatorallowlist creatorallowlist_map = 2 [(gogoproto.nullable) = false];
+  repeated Verifiedtoken verifiedtoken_map = 3 [(gogoproto.nullable) = false];
+  repeated Rewardaccrual rewardaccrual_map = 4 [(gogoproto.nullable) = false];
+}

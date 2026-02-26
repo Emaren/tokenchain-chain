@@ -1,0 +1,143 @@
+package loyalty
+
+import (
+	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
+
+	"tokenchain/x/loyalty/types"
+)
+
+// AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
+func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
+	return &autocliv1.ModuleOptions{
+		Query: &autocliv1.ServiceCommandDescriptor{
+			Service: types.Query_serviceDesc.ServiceName,
+			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
+				{
+					RpcMethod: "Params",
+					Use:       "params",
+					Short:     "Shows the parameters of the module",
+				},
+				{
+					RpcMethod: "ListCreatorallowlist",
+					Use:       "list-creatorallowlist",
+					Short:     "List all creatorallowlist",
+				},
+				{
+					RpcMethod:      "GetCreatorallowlist",
+					Use:            "get-creatorallowlist [id]",
+					Short:          "Gets a creatorallowlist",
+					Alias:          []string{"show-creatorallowlist"},
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "address"}},
+				},
+				{
+					RpcMethod: "ListVerifiedtoken",
+					Use:       "list-verifiedtoken",
+					Short:     "List all verifiedtoken",
+				},
+				{
+					RpcMethod:      "GetVerifiedtoken",
+					Use:            "get-verifiedtoken [id]",
+					Short:          "Gets a verifiedtoken",
+					Alias:          []string{"show-verifiedtoken"},
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
+				},
+				{
+					RpcMethod: "ListRewardaccrual",
+					Use:       "list-rewardaccrual",
+					Short:     "List all rewardaccrual",
+				},
+				{
+					RpcMethod:      "GetRewardaccrual",
+					Use:            "get-rewardaccrual [id]",
+					Short:          "Gets a rewardaccrual",
+					Alias:          []string{"show-rewardaccrual"},
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "key"}},
+				},
+				// this line is used by ignite scaffolding # autocli/query
+			},
+		},
+		Tx: &autocliv1.ServiceCommandDescriptor{
+			Service:              types.Msg_serviceDesc.ServiceName,
+			EnhanceCustomCommand: true, // only required if you want to use the custom command
+			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
+				{
+					RpcMethod: "UpdateParams",
+					Skip:      true, // skipped because authority gated
+				},
+				{
+					RpcMethod:      "CreateCreatorallowlist",
+					Use:            "create-creatorallowlist [address] [enabled]",
+					Short:          "Create a new creatorallowlist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "address"}, {ProtoField: "enabled"}},
+				},
+				{
+					RpcMethod:      "UpdateCreatorallowlist",
+					Use:            "update-creatorallowlist [address] [enabled]",
+					Short:          "Update creatorallowlist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "address"}, {ProtoField: "enabled"}},
+				},
+				{
+					RpcMethod:      "DeleteCreatorallowlist",
+					Use:            "delete-creatorallowlist [address]",
+					Short:          "Delete creatorallowlist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "address"}},
+				},
+				{
+					RpcMethod:      "CreateVerifiedtoken",
+					Use:            "create-verifiedtoken [denom] [issuer] [name] [symbol] [description] [website] [max-supply] [minted-supply] [verified] [seizure-opt-in] [recovery-group-policy] [recovery-timelock-hours]",
+					Short:          "Create a new verifiedtoken",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "issuer"}, {ProtoField: "name"}, {ProtoField: "symbol"}, {ProtoField: "description"}, {ProtoField: "website"}, {ProtoField: "max_supply"}, {ProtoField: "minted_supply"}, {ProtoField: "verified"}, {ProtoField: "seizure_opt_in"}, {ProtoField: "recovery_group_policy"}, {ProtoField: "recovery_timelock_hours"}},
+				},
+				{
+					RpcMethod:      "UpdateVerifiedtoken",
+					Use:            "update-verifiedtoken [denom] [issuer] [name] [symbol] [description] [website] [max-supply] [minted-supply] [verified] [seizure-opt-in] [recovery-group-policy] [recovery-timelock-hours]",
+					Short:          "Update verifiedtoken",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "issuer"}, {ProtoField: "name"}, {ProtoField: "symbol"}, {ProtoField: "description"}, {ProtoField: "website"}, {ProtoField: "max_supply"}, {ProtoField: "minted_supply"}, {ProtoField: "verified"}, {ProtoField: "seizure_opt_in"}, {ProtoField: "recovery_group_policy"}, {ProtoField: "recovery_timelock_hours"}},
+				},
+				{
+					RpcMethod:      "DeleteVerifiedtoken",
+					Use:            "delete-verifiedtoken [denom]",
+					Short:          "Delete verifiedtoken",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
+				},
+				{
+					RpcMethod:      "CreateRewardaccrual",
+					Use:            "create-rewardaccrual [key] [address] [denom] [amount] [last-rollup-date]",
+					Short:          "Create a new rewardaccrual",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "key"}, {ProtoField: "address"}, {ProtoField: "denom"}, {ProtoField: "amount"}, {ProtoField: "last_rollup_date"}},
+				},
+				{
+					RpcMethod:      "UpdateRewardaccrual",
+					Use:            "update-rewardaccrual [key] [address] [denom] [amount] [last-rollup-date]",
+					Short:          "Update rewardaccrual",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "key"}, {ProtoField: "address"}, {ProtoField: "denom"}, {ProtoField: "amount"}, {ProtoField: "last_rollup_date"}},
+				},
+				{
+					RpcMethod:      "DeleteRewardaccrual",
+					Use:            "delete-rewardaccrual [key]",
+					Short:          "Delete rewardaccrual",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "key"}},
+				},
+				{
+					RpcMethod:      "MintVerifiedToken",
+					Use:            "mint-verified-token [denom] [recipient] [amount]",
+					Short:          "Send a mint-verified-token tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "recipient"}, {ProtoField: "amount"}},
+				},
+				{
+					RpcMethod:      "ClaimReward",
+					Use:            "claim-reward [denom]",
+					Short:          "Send a claim-reward tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
+				},
+				{
+					RpcMethod:      "RecordRewardAccrual",
+					Use:            "record-reward-accrual [address] [denom] [amount] [date]",
+					Short:          "Send a record-reward-accrual tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "address"}, {ProtoField: "denom"}, {ProtoField: "amount"}, {ProtoField: "date"}},
+				},
+				// this line is used by ignite scaffolding # autocli/tx
+			},
+		},
+	}
+}
