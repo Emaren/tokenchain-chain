@@ -41,11 +41,18 @@ Workspace: /Users/tonyblum/projects/TokenChain
 - Documentation updates:
   - `readme.md`
   - `docs/tokenchain-day1.md`
+- GitHub release workflow fixes:
+  - replaced Ignite cross-platform release builder with explicit Linux release packaging (`tokenchaind-linux-amd64` + `libwasmvm.x86_64.so`)
+  - added release-only Sonic fallback build tag to avoid Go 1.24 linker breakage on Linux (`GOFLAGS: -tags=go1.27`)
+  - latest release workflow run is green on `main`
 
 ## In Progress
 - TokenFactory parity work:
   - completed tokenfactory-style denom canonicalization + strict full-denom enforcement
   - remaining: native tokenfactory module parity and admin flow integration.
+- Testnet Osmosis IBC channel bootstrap:
+  - automated retry timer/service is live in `tokenchain-ops`
+  - blocker: Osmosis relayer key funding via faucet is still pending before channel/connection finalize
 
 ## Resume Plan
 1. Design and wire TokenFactory module path that preserves locked Day-1 policy rules.
