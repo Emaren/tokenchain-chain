@@ -34,9 +34,6 @@ func (k msgServer) ExecuteRecoveryTransfer(ctx context.Context, msg *types.MsgEx
 	if op.Status != types.RecoveryStatusQueued {
 		return nil, errorsmod.Wrapf(types.ErrRecoveryNotQueued, "recovery operation %d is in %s state", msg.Id, op.Status)
 	}
-	if uint64(nowUnix) < op.ExecuteAfter {
-		return nil, errorsmod.Wrapf(types.ErrRecoveryTooEarly, "operation %d unlocks at %d", msg.Id, op.ExecuteAfter)
-	}
 
 	token, err := k.Verifiedtoken.Get(ctx, op.Denom)
 	if err != nil {
@@ -51,6 +48,9 @@ func (k msgServer) ExecuteRecoveryTransfer(ctx context.Context, msg *types.MsgEx
 	isAuthority := k.ensureAuthority(msg.Creator) == nil
 	if msg.Creator != token.RecoveryGroupPolicy && !isAuthority {
 		return nil, errorsmod.Wrap(types.ErrRecoveryUnauthorized, "only recovery group policy or authority can execute recovery")
+	}
+	if uint64(nowUnix) < op.ExecuteAfter {
+		return nil, errorsmod.Wrapf(types.ErrRecoveryTooEarly, "operation %d unlocks at %d", msg.Id, op.ExecuteAfter)
 	}
 
 	fromAddr, err := k.addressCodec.StringToBytes(op.FromAddress)

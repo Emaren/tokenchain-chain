@@ -104,6 +104,12 @@ func TestExecuteRecoveryTransfer(t *testing.T) {
 	require.EqualValues(t, opID, queueResp.Id)
 
 	_, err = srv.ExecuteRecoveryTransfer(baseCtx, &types.MsgExecuteRecoveryTransfer{
+		Creator: sample.AccAddress(),
+		Id:      opID,
+	})
+	require.ErrorIs(t, err, types.ErrRecoveryUnauthorized)
+
+	_, err = srv.ExecuteRecoveryTransfer(baseCtx, &types.MsgExecuteRecoveryTransfer{
 		Creator: creator,
 		Id:      opID,
 	})
