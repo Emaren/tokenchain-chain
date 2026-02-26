@@ -23,6 +23,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker
   - daily rollup status query endpoint (`/tokenchain/loyalty/v1/daily_rollup/status`)
   - filtered reward accrual query endpoint (`/tokenchain/loyalty/v1/rewardaccruals/filter`)
+  - reward pool balance query endpoint (`/tokenchain/loyalty/v1/reward_pool/balance?denom=...`)
   - filtered recovery operations query endpoint (`/tokenchain/loyalty/v1/recoveryoperations/filter`)
   - richer tx responses for create/mint/recovery/accrual/claim operations (denom, minted supply, IDs/status/timestamps, amounts, rollup date)
 - Inflation suppression hook added in app init flow.

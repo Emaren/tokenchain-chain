@@ -37,6 +37,7 @@ This repository now includes a working chain baseline with:
 - automatic daily rollup boundary in begin-block using `America/Edmonton`, with on-chain rollup marker persistence
 - daily rollup status query (`/tokenchain/loyalty/v1/daily_rollup/status`) for dashboard/indexer consumption
 - reward accrual filter query (`/tokenchain/loyalty/v1/rewardaccruals/filter`) by address/denom + pagination
+- reward pool balance query (`/tokenchain/loyalty/v1/reward_pool/balance?denom=...`) for claim solvency visibility
 - recovery operations filter query (`/tokenchain/loyalty/v1/recoveryoperations/filter`) with status/token/address + pagination
 - daily rollup timezone param default: `America/Edmonton`
 - timelock params defaults: testnet `1h`, mainnet `24h`

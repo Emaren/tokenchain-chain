@@ -75,6 +75,11 @@ service Query {
   rpc DailyRollupStatus(QueryDailyRollupStatusRequest) returns (QueryDailyRollupStatusResponse) {
     option (google.api.http).get = "/tokenchain/loyalty/v1/daily_rollup/status";
   }
+
+  // RewardPoolBalance returns the loyalty module spendable balance for a denom.
+  rpc RewardPoolBalance(QueryRewardPoolBalanceRequest) returns (QueryRewardPoolBalanceResponse) {
+    option (google.api.http).get = "/tokenchain/loyalty/v1/reward_pool/balance";
+  }
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -212,4 +217,16 @@ message QueryDailyRollupStatusResponse {
   string last_daily_rollup_date = 3;
   bool has_rolled_today = 4;
   string next_rollup_date = 5;
+}
+
+// QueryRewardPoolBalanceRequest defines the QueryRewardPoolBalanceRequest message.
+message QueryRewardPoolBalanceRequest {
+  string denom = 1;
+}
+
+// QueryRewardPoolBalanceResponse defines the QueryRewardPoolBalanceResponse message.
+message QueryRewardPoolBalanceResponse {
+  string module_address = 1;
+  string denom = 2;
+  string amount = 3;
 }

@@ -80,6 +80,8 @@ func (m *mockBankKeeper) SpendableCoins(_ context.Context, addr sdk.AccAddress) 
 
 func (m *mockBankKeeper) MintCoins(_ context.Context, moduleName string, amt sdk.Coins) error {
 	m.moduleBalances[moduleName] = m.moduleBalances[moduleName].Add(amt...)
+	moduleAddr := authtypes.NewModuleAddress(moduleName).String()
+	m.accountBalances[moduleAddr] = m.accountBalances[moduleAddr].Add(amt...)
 	return nil
 }
 
@@ -89,6 +91,8 @@ func (m *mockBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, moduleN
 		return sdkerrors.ErrInsufficientFunds
 	}
 	m.moduleBalances[moduleName] = moduleBal.Sub(amt...)
+	moduleAddr := authtypes.NewModuleAddress(moduleName).String()
+	m.accountBalances[moduleAddr] = m.accountBalances[moduleAddr].Sub(amt...)
 	m.accountBalances[recipientAddr.String()] = m.accountBalances[recipientAddr.String()].Add(amt...)
 	return nil
 }
@@ -100,6 +104,8 @@ func (m *mockBankKeeper) SendCoinsFromAccountToModule(_ context.Context, senderA
 	}
 	m.accountBalances[senderAddr.String()] = accountBal.Sub(amt...)
 	m.moduleBalances[moduleName] = m.moduleBalances[moduleName].Add(amt...)
+	moduleAddr := authtypes.NewModuleAddress(moduleName).String()
+	m.accountBalances[moduleAddr] = m.accountBalances[moduleAddr].Add(amt...)
 	return nil
 }
 
