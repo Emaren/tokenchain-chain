@@ -18,6 +18,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - automatic bank denom metadata publication on token create/update/genesis import
   - recovery policy hardening: `x/group` policy existence checks + network-aware timelock minimums
   - recovery execute authorization tightened (policy/authority only)
+  - immutable issuer + anti-bait-switch rule (cannot enable seizure after minting starts)
   - accrual and claim ledger
   - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker
   - daily rollup status query endpoint (`/tokenchain/loyalty/v1/daily_rollup/status`)

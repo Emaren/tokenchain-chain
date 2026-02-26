@@ -138,6 +138,20 @@ func TestVerifiedtokenMsgServerUpdate(t *testing.T) {
 			err: sdkerrors.ErrUnauthorized,
 		},
 		{
+			desc: "issuer immutable",
+			request: &types.MsgUpdateVerifiedtoken{
+				Creator:   creator,
+				Denom:     denom,
+				Issuer:    sample.AccAddress(),
+				Name:      "Updated",
+				Symbol:    "updated",
+				Website:   "https://tokentap.ca",
+				MaxSupply: 1_000_000,
+				Verified:  true,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
 			desc: "key not found",
 			request: &types.MsgUpdateVerifiedtoken{
 				Creator:   creator,
@@ -190,6 +204,43 @@ func TestVerifiedtokenMsgServerUpdate(t *testing.T) {
 			require.Equal(t, "updated", metadata.Symbol)
 		})
 	}
+}
+
+func TestVerifiedtokenUpdate_CannotEnableSeizureAfterMinting(t *testing.T) {
+	f := initFixture(t)
+	srv := keeper.NewMsgServerImpl(f.keeper)
+	creator := authorityAddress(t, f)
+	subdenom := "late-seizure"
+	denom := factoryDenom(creator, subdenom)
+
+	_, err := srv.CreateVerifiedtoken(f.ctx, baseVerifiedToken(creator, subdenom))
+	require.NoError(t, err)
+	_, err = srv.MintVerifiedToken(f.ctx, &types.MsgMintVerifiedToken{
+		Creator:   creator,
+		Denom:     denom,
+		Recipient: sample.AccAddress(),
+		Amount:    1,
+	})
+	require.NoError(t, err)
+
+	policy := sample.AccAddress()
+	f.groupKeeper.addPolicy(policy)
+	_, err = srv.UpdateVerifiedtoken(f.ctx, &types.MsgUpdateVerifiedtoken{
+		Creator:               creator,
+		Denom:                 denom,
+		Issuer:                creator,
+		Name:                  "Updated Token",
+		Symbol:                "updated",
+		Description:           "updated description",
+		Website:               "https://tokentap.ca",
+		MaxSupply:             2_000_000,
+		MintedSupply:          0,
+		Verified:              true,
+		SeizureOptIn:          true,
+		RecoveryGroupPolicy:   policy,
+		RecoveryTimelockHours: 1,
+	})
+	require.ErrorIs(t, err, types.ErrRecoveryPolicy)
 }
 
 func TestVerifiedtokenMsgServerDelete(t *testing.T) {

@@ -25,6 +25,8 @@ This repository now includes a working chain baseline with:
 - recovery policy hardening:
   - `recovery_group_policy` must resolve to an existing `x/group` policy account
   - timelock minimum is enforced per network (`testnet_timelock_hours` vs `mainnet_timelock_hours`)
+  - issuer is immutable after token creation
+  - seizure/recovery cannot be enabled after minting has begun
 - on-chain recovery operation queue with timelock execution:
   - `queue-recovery-transfer`
   - `execute-recovery-transfer` (policy/authority gated)

@@ -114,8 +114,21 @@ func (k msgServer) UpdateVerifiedtoken(ctx context.Context, msg *types.MsgUpdate
 	if err := k.validateTokenFactoryDenom(msg.Denom); err != nil {
 		return nil, err
 	}
+	denomIssuer, _, err := splitTokenFactoryDenom(msg.Denom)
+	if err != nil {
+		return nil, err
+	}
+	if msg.Issuer != val.Issuer {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "issuer cannot be changed after token creation")
+	}
+	if msg.Issuer != denomIssuer {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "issuer must match tokenfactory denom issuer")
+	}
 	if msg.MaxSupply < val.MintedSupply {
 		return nil, errorsmod.Wrapf(types.ErrInvalidCap, "max supply cannot be lower than minted supply (%d)", val.MintedSupply)
+	}
+	if !val.SeizureOptIn && msg.SeizureOptIn && val.MintedSupply > 0 {
+		return nil, errorsmod.Wrap(types.ErrRecoveryPolicy, "cannot enable seizure/recovery after token minting has started")
 	}
 
 	// Checks if the msg creator is the same as the current owner or the authority.

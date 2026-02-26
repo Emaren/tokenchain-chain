@@ -38,6 +38,8 @@
 - No-seizure default: `seizure_opt_in_default=false`
 - Opt-in recovery execution flow:
   - recovery policy address must exist in `x/group` (not a free-form string)
+  - issuer is immutable once token is created
+  - seizure opt-in cannot be turned on after minting begins
   - `queue-recovery-transfer` (policy/authority only)
   - timelock enforced on-chain
   - timelock minimum follows network mode:
