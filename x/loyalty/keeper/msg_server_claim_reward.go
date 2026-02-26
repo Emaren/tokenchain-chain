@@ -11,6 +11,7 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 func (k msgServer) ClaimReward(ctx context.Context, msg *types.MsgClaimReward) (*types.MsgClaimRewardResponse, error) {
@@ -35,6 +36,20 @@ func (k msgServer) ClaimReward(ctx context.Context, msg *types.MsgClaimReward) (
 	}
 	if record.Amount == 0 {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "no reward balance to claim")
+	}
+
+	claimAmount := sdkmath.NewIntFromUint64(record.Amount)
+	moduleAddr := authtypes.NewModuleAddress(types.ModuleName)
+	moduleBalance := k.bankKeeper.SpendableCoins(ctx, moduleAddr).AmountOf(msg.Denom)
+	if moduleBalance.LT(claimAmount) {
+		return nil, errorsmod.Wrapf(
+			types.ErrRewardPoolInsufficient,
+			"module balance %s%s is smaller than claim %s%s",
+			moduleBalance.String(),
+			msg.Denom,
+			claimAmount.String(),
+			msg.Denom,
+		)
 	}
 
 	coins := sdk.NewCoins(sdk.NewCoin(msg.Denom, sdkmath.NewIntFromUint64(record.Amount)))

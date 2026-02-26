@@ -33,6 +33,7 @@ This repository now includes a working chain baseline with:
   - `cancel-recovery-transfer`
 - hard-cap mint checks (`mint-verified-token` cannot exceed `max_supply`)
 - on-chain accrual ledger (`rewardaccrual`) and user claim flow (`claim-reward`)
+- explicit reward pool funding tx (`fund-reward-pool`) to provision claim liquidity from operator wallets
 - enriched tx responses for `record-reward-accrual` and `claim-reward` (amounts, denom, key/date)
 - automatic daily rollup boundary in begin-block using `America/Edmonton`, with on-chain rollup marker persistence
 - daily rollup status query (`/tokenchain/loyalty/v1/daily_rollup/status`) for dashboard/indexer consumption

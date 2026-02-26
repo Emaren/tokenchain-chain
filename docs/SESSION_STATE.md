@@ -20,6 +20,7 @@ Workspace: /Users/tonyblum/projects/TokenChain
   - recovery execute authorization tightened (policy/authority only)
   - immutable issuer + anti-bait-switch rule (cannot enable seizure after minting starts)
   - accrual and claim ledger
+  - reward pool funding tx (`fund-reward-pool`) for claim liquidity operations
   - begin-block daily rollup boundary scheduler (`America/Edmonton`) with persisted last-rollup marker
   - daily rollup status query endpoint (`/tokenchain/loyalty/v1/daily_rollup/status`)
   - filtered reward accrual query endpoint (`/tokenchain/loyalty/v1/rewardaccruals/filter`)

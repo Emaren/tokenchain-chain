@@ -54,6 +54,11 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "key"}},
 				},
 				{
+					RpcMethod: "FilterRewardaccrual",
+					Use:       "filter-rewardaccrual",
+					Short:     "Filter reward accrual records by address/denom",
+				},
+				{
 					RpcMethod: "ListRecoveryoperation",
 					Use:       "list-recoveryoperation",
 					Short:     "List all recoveryoperation",
@@ -64,6 +69,24 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Gets a recoveryoperation by id",
 					Alias:          []string{"show-recoveryoperation"},
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
+				},
+				{
+					RpcMethod: "FilterRecoveryoperation",
+					Use:       "filter-recoveryoperation",
+					Short:     "Filter recovery operations by status/token/address",
+				},
+				{
+					RpcMethod: "DailyRollupStatus",
+					Use:       "daily-rollup-status",
+					Short:     "Show daily rollup status for configured timezone",
+				},
+				{
+					RpcMethod: "RewardPoolBalance",
+					Use:       "reward-pool-balance [denom]",
+					Short:     "Show loyalty reward pool spendable balance for denom",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "denom"},
+					},
 				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
@@ -141,6 +164,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "claim-reward [denom]",
 					Short:          "Send a claim-reward tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}},
+				},
+				{
+					RpcMethod:      "FundRewardPool",
+					Use:            "fund-reward-pool [denom] [amount]",
+					Short:          "Fund the loyalty reward pool from signer account",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "denom"}, {ProtoField: "amount"}},
 				},
 				{
 					RpcMethod:      "RecordRewardAccrual",

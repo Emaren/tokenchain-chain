@@ -81,3 +81,30 @@ func TestClaimRewardResponse(t *testing.T) {
 	accountBalance := f.bankKeeper.SpendableCoins(f.ctx, sdk.MustAccAddressFromBech32(address))
 	require.Equal(t, coins, accountBalance)
 }
+
+func TestClaimRewardInsufficientPool(t *testing.T) {
+	f := initFixture(t)
+	srv := keeper.NewMsgServerImpl(f.keeper)
+	creator := authorityAddress(t, f)
+	address := sample.AccAddress()
+	key := address + "|utoken"
+
+	require.NoError(t, f.keeper.Rewardaccrual.Set(f.ctx, key, types.Rewardaccrual{
+		Creator:        creator,
+		Key:            key,
+		Address:        address,
+		Denom:          "utoken",
+		Amount:         50,
+		LastRollupDate: "2026-02-25",
+	}))
+
+	_, err := srv.ClaimReward(f.ctx, &types.MsgClaimReward{
+		Creator: address,
+		Denom:   "utoken",
+	})
+	require.ErrorIs(t, err, types.ErrRewardPoolInsufficient)
+
+	record, getErr := f.keeper.Rewardaccrual.Get(f.ctx, key)
+	require.NoError(t, getErr)
+	require.EqualValues(t, 50, record.Amount)
+}

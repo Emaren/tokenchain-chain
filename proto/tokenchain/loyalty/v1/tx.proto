@@ -51,6 +51,9 @@ service Msg {
   // ClaimReward defines the ClaimReward RPC.
   rpc ClaimReward(MsgClaimReward) returns (MsgClaimRewardResponse);
 
+  // FundRewardPool defines the FundRewardPool RPC.
+  rpc FundRewardPool(MsgFundRewardPool) returns (MsgFundRewardPoolResponse);
+
   // RecordRewardAccrual defines the RecordRewardAccrual RPC.
   rpc RecordRewardAccrual(MsgRecordRewardAccrual) returns (MsgRecordRewardAccrualResponse);
 
@@ -236,6 +239,22 @@ message MsgClaimRewardResponse {
   string address = 1;
   string denom = 2;
   uint64 amount_claimed = 3;
+}
+
+// MsgFundRewardPool defines the MsgFundRewardPool message.
+message MsgFundRewardPool {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string denom = 2;
+  uint64 amount = 3;
+}
+
+// MsgFundRewardPoolResponse defines the MsgFundRewardPoolResponse message.
+message MsgFundRewardPoolResponse {
+  string module_address = 1;
+  string denom = 2;
+  uint64 amount_funded = 3;
+  string new_balance = 4;
 }
 
 // MsgRecordRewardAccrual defines the MsgRecordRewardAccrual message.

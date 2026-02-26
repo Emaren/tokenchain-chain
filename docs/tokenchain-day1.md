@@ -50,7 +50,9 @@
 - Hard cap enforcement in mint path (`mint-verified-token`)
 - Reward accrual ledger and claim path:
   - authority can record accruals
+  - operators can fund the claim pool on-chain via `fund-reward-pool [denom] [amount]`
   - users claim accrued balances on-chain
+  - claims fail with explicit module error if reward pool balance is insufficient
   - tx responses include explicit accrual/claim result fields (key, denom, amounts, rollup date)
   - begin-block daily rollup boundary fires once per Edmonton local day and emits `loyalty_daily_rollup`
   - query endpoint exposes rollup status for dashboards: `/tokenchain/loyalty/v1/daily_rollup/status`
